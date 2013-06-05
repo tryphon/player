@@ -1,0 +1,102 @@
+/* --- RESET CSS --- */
+/* With thanks to Eric Meyer http://meyerweb.com/eric/tools/css/reset/ */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td 
+{
+        margin: 0;
+        padding: 0;
+        border: 0;
+        outline: 0;
+        vertical-align: baseline;
+        background: transparent;
+        font-size:13px;
+}
+
+ol, ul { list-style: none; }
+
+/* Force vertical scrollbar to prevent jump for longer content */
+html 
+{
+        overflow-y: scroll;
+}
+
+body {
+    background: #e7e7e7;
+}
+
+#panel {
+    /* margin: 5px auto; */
+
+    background: white;
+    position: relative;
+
+    /* fixed size (from screen) */
+    /* width: 700px; */
+    height: 200px; /* 200px - 100 */
+
+    /* shadows */
+    /* -webkit-box-shadow: 3px 3px 4px #BBB; */
+    /* box-shadow: 3px 3px 4px #BBB; */
+    /* border-right: 1px solid #BBB; */
+    /* border-bottom: 1px solid #BBB; */
+
+    /* padding: 70px 30px 30px 30px; */
+}
+
+#content {
+    background: #e7e7e7 url(text.png) no-repeat 90% 50%;
+    height: 100px;
+
+    position: absolute;
+    top: 70px;
+    left: 30px;
+    bottom: 30px;
+    right: 30px;
+}
+
+#player {
+    margin: 24px 0 0 24px;
+}
+
+#player img {
+    float: left;
+}
+
+#player a {
+    padding-left: 60px;
+    padding-top: 8px;
+
+    height: 48px;
+    display: block;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: Arial;
+    font-size: 15px;
+
+    font-weight: bold;
+    color: black;
+}
+
+#player a span.time {
+    display: block;
+    font-weight: normal;
+    color: #8e8e8e;
+}
+
+h1 {
+    position: absolute;
+    left: 30px;
+    top: 30px;
+    
+    text-indent: -9999px;
+    background: transparent url(logo.png) no-repeat top left;
+    height: 38px;
+    width: 160px;
+}
