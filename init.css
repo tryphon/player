@@ -1,0 +1,14 @@
+@font-face {
+  font-family: "museo";
+  src: url("Museo700-Regular.otf") format("opentype");
+}
+
+.player a {
+    font-family: "museo";
+    font-size: 13px;
+}
+
+.player.large a {
+    font-size: 1.5em;
+    font-family: "museo";
+}

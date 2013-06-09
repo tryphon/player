@@ -10,6 +10,24 @@ namespace :build do
     end
   end
 
+  namespace :soundmanager do
+
+    task :flash8 => :base do
+      sh "mtasc -swf build/soundmanager2_debug.swf -main -header 16:16:30 soundmanager/src/SoundManager2.as -version 8"
+    end
+
+    task :flash9 => :base do
+      sh "/opt/flex-sdk-4.6/bin/mxmlc -debug=true -static-link-runtime-shared-libraries=true -optimize=true -o build/soundmanager2_flash9_debug.swf -file-specs soundmanager/src/SoundManager2_AS3.as"
+    end
+
+    task :xdomain => :base do
+      Dir.chdir("build") do
+        sh "unzip -f ../soundmanager/swf/soundmanager2_flash_xdomain.zip > /dev/null"
+      end
+    end
+
+  end
+
 end
 
 namespace :dist do
@@ -17,9 +35,15 @@ namespace :dist do
     mkdir_p "dist/swf"
   end
 
-  task :soundmanager => :base do
-    # cp Dir["soundmanager/script/*.js"], "dist/script"
-    cp Dir["soundmanager/swf/*.swf"], "dist/swf"
+  task :soundmanager => "build:soundmanager:xdomain" do
+    # cp Dir["soundmanager/swf/*.swf"], "dist/swf"
+    cp Dir["build/soundmanager2_flash_xdomain/*.swf"], "dist/swf"
+
+    #cp "build/soundmanager2_debug.swf", "dist/swf"
+    #cp "build/soundmanager2_debug.swf", "dist/swf/soundmanager2.swf"
+
+    #cp "build/soundmanager2_flash9_debug.swf", "dist/swf"
+    #cp "build/soundmanager2_flash9_debug.swf", "dist/swf/soundmanager2_flash9.swf"
   end
 
   task :three_sixty_player do
@@ -32,7 +56,8 @@ namespace :dist do
   def concat(inputs, output)
     File.open(output, "w") do |f|
       inputs.each do |input|
-        f.puts "// #{File.basename(input)} :"
+        f.puts ""
+        # f.puts "// #{File.basename(input)} :"
         File.readlines(input).each do |line|
           f.puts line.chomp
         end
@@ -41,7 +66,10 @@ namespace :dist do
   end
 
   task :css do
-    concat Dir["soundmanager/demo/360-player/360*.css"].sort, "dist/player.css"
+    css_files = Dir["soundmanager/demo/360-player/360*.css"].sort.reverse
+    css_files << "init.css"
+
+    concat css_files, "dist/player.css"
   end
 
   task :javascript => "build:fix_animator" do
@@ -50,7 +78,7 @@ namespace :dist do
 
   task :html do
     cp "index.html", "dist"
-    cp "crossdomain.xml", "dist"
+    cp Dir["*.otf"], "dist"
     cp Dir["tune-1000.*"], "dist"
   end
 end
