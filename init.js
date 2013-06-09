@@ -19,7 +19,7 @@ Array.prototype.contains = function(obj) {
 function TryphonPlayer() {
     
     this.domain = function() {
-        return "http://player.tryphon.local";
+        return "http://player.tryphon.eu";
     };
 
     this.init = function() {
