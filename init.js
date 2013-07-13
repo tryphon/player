@@ -23,16 +23,20 @@ function TryphonPlayer() {
     };
 
     this.init = function() {
-        console.log("init");
-
         soundManager.url = this.domain() + "/swf/";
-        soundManager.debugMode = false;
+        soundManager.debugMode = true;
+        soundManager.useHTML5Audio = true;
 
         this.initThreeSixtyPlayer();
 
         window.onload = function() {
             this.loadCSS();
             this.rewritePlayerClasses();
+
+            initThreeSixtyPlayer = function() {
+                threeSixtyPlayer.init.apply(window);                  
+            };
+            window.setTimeout(initThreeSixtyPlayer, 1000);
         }.bind(this);
     };
 
@@ -64,16 +68,9 @@ function TryphonPlayer() {
             // even if HTML5 supports MP3, prefer flash so the visualization features can be used.
             soundManager.preferFlash = true;
         }
-
-        if (window.location.href.match(/html5/i)) {
-            // for testing IE 9, etc.
-            soundManager.useHTML5Audio = true;
-        }
     };
 
     this.loadCSS = function() {
-        console.log("load CSS");
-
         var cssLink = document.createElement("link");
         cssLink.rel="stylesheet";
         cssLink.type="text/css";

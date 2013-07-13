@@ -74,6 +74,7 @@ namespace :dist do
 
   task :javascript => "build:fix_animator" do
     concat ["soundmanager/demo/360-player/script/excanvas.js", "build/berniecode-animator.js", "soundmanager/script/soundmanager2.js", "soundmanager/demo/360-player/script/360player.js", "init.js"], "dist/player.js"
+    sh "sed -i '/soundManager.onready(threeSixtyPlayer.init);/ d' dist/player.js"
   end
 
   task :html do
