@@ -44,6 +44,8 @@ namespace :dist do
 
     #cp "build/soundmanager2_flash9_debug.swf", "dist/swf"
     #cp "build/soundmanager2_flash9_debug.swf", "dist/swf/soundmanager2_flash9.swf"
+
+    cp Dir["soundmanager/script/soundmanager2.js"], "dist/"
   end
 
   task :three_sixty_player do
