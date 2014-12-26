@@ -69,7 +69,7 @@ namespace :dist do
 
   task :css do
     css_files = Dir["soundmanager/demo/360-player/360*.css"].sort.reverse
-    css_files << "init.css"
+    # css_files << "init.css"
 
     concat css_files, "dist/player.css"
   end
@@ -81,6 +81,7 @@ namespace :dist do
 
   task :html do
     cp "index.html", "dist"
+    cp "demo.css", "dist"
     cp Dir["*.otf"], "dist"
     cp Dir["tune-1000.*"], "dist"
   end
