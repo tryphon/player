@@ -86,9 +86,28 @@
       bottom: 10px;
       height: 5px;
       background-color: #aaa;
-      display: inline-block; }
-    .tryphon-player .content .progress {
+      display: inline-block;
+      border-radius: 3px; }
+      .tryphon-player .content .bar .progress {
+        background-color: #fff;
+        display: inline-block;
+        width: 0;
+        height: 100%; }
+    .tryphon-player .content .peak {
+      position: absolute;
+      bottom: 18px;
+      height: 3px;
+      width: 202px;
       background-color: #fff;
       display: inline-block;
-      width: 0;
-      height: 100%; }
+      border-radius: 3px; }
+      .tryphon-player .content .peak.left {
+        left: 180px;
+        text-align: right; }
+      .tryphon-player .content .peak.right {
+        right: 55px; }
+      .tryphon-player .content .peak .level {
+        background-color: #aaa;
+        display: inline-block;
+        width: 0;
+        height: 100%; }

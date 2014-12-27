@@ -36,9 +36,15 @@ class @Tryphon.Player
       url: 'http://player.tryphon.eu/swf',
       debugMode: true,
       useHTML5Audio: true,
+      preferFlash: true,
+      flashVersion: 9,
       onready: () ->
         $.each players, (index, player) ->
           player.register()
+    }
+
+    soundManager.flash9Options = {
+      usePeakData: true
     }
 
   view_root: () =>
@@ -71,12 +77,11 @@ class @Tryphon.Player
     else
       @sound().resume()
 
-  whileplaying: () =>
-
   statusChanged: (status) =>
     if status == "playing"
       $(@view).removeClass("play").addClass("pause")
     else
+      @set_peak_data {left: 0, right: 0}
       $(@view).removeClass("pause").addClass("play")
 
   playing: () ->
@@ -88,6 +93,40 @@ class @Tryphon.Player
   pause: () ->
     @sound().pause()
 
+  whileplaying: () =>
+    peak_data = @sound().peakData
+    unless peak_data and peak_data.left > 0 and peak_data.right > 0
+      peak_data = @random_peek_data()
+
+    @set_peak_data peak_data
+
+  random_peek_data: () ->
+    time = new Date() / 1000
+
+    base_wave = (Math.sin(Math.PI*2* time * 250)+1)/5
+    small_wave = Math.sin(Math.PI*2* time * (400 + Math.random() * 100)) / 6
+
+    random = base_wave + small_wave
+
+    left_right_delta = (Math.random()-0.5)/5
+    {
+      left: Math.max(0, Math.min(1, random)),
+      right: Math.max(0, Math.min(1, random + left_right_delta))
+    }
+
+
+  set_peak_data: (peakData) =>
+    @view_peak_left().css("width", "#{(peakData.left * 100).toFixed(0)}%")
+    @view_peak_right().css("width", "#{(peakData.right * 100).toFixed(0)}%")
+
+  view_peak_left: () =>
+    @_view_peak_left ||= @view_root().find(".peak.left .level")
+  view_peak_right: () =>
+    @_view_peak_right ||= @view_root().find(".peak.right .level")
+
+  init_view_peak_bar: () =>
+    $(@view).after("<span class='peak left'><span class='level'></span></span><span class='peak right'><span class='level'></span></span>")
+
 class @Tryphon.Player.AudioBank extends Tryphon.Player
   @support_url : (url) ->
     /audiobank.tryphon.(eu|dev)/.test(url)
@@ -97,8 +136,9 @@ class @Tryphon.Player.AudioBank extends Tryphon.Player
 
     $(@view).removeClass("tryphon-player")
     $(@view).wrap("<div class='tryphon-player audiobank'><div class='content'></div></div>")
-    $(@view).after("<span class='duration'></span>")
     $(@view).after("<span class='bar'><span class='progress'></span></span>")
+    @init_view_peak_bar()
+    $(@view).after("<span class='duration'></span>")
 
   load_attributes: () ->
     @cast.load_attributes (attributes) =>
@@ -138,6 +178,7 @@ class @Tryphon.Player.AudioBank extends Tryphon.Player
     soundManager.createSound id: @sound_name(), url: @cast.audiobank_url(@default_format())
 
   whileplaying: () =>
+    super()
     @set_progress @sound().position / 1000.0
 
 class Tryphon.AudioBankCast
@@ -180,6 +221,7 @@ class @Tryphon.Player.Stream extends Tryphon.Player
 
     $(@view).removeClass("tryphon-player")
     $(@view).wrap("<div class='tryphon-player stream'><div class='content'></div></div>")
+    @init_view_peak_bar()
 
   load_attributes: () ->
 

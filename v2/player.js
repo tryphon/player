@@ -31,8 +31,12 @@
   this.Tryphon.Player = (function() {
     function Player(view) {
       this.view = view;
-      this.statusChanged = __bind(this.statusChanged, this);
+      this.init_view_peak_bar = __bind(this.init_view_peak_bar, this);
+      this.view_peak_right = __bind(this.view_peak_right, this);
+      this.view_peak_left = __bind(this.view_peak_left, this);
+      this.set_peak_data = __bind(this.set_peak_data, this);
       this.whileplaying = __bind(this.whileplaying, this);
+      this.statusChanged = __bind(this.statusChanged, this);
       this.sound = __bind(this.sound, this);
       this.prepare_view = __bind(this.prepare_view, this);
       this.view_root = __bind(this.view_root, this);
@@ -59,16 +63,21 @@
           }
         })();
       });
-      return soundManager.setup({
+      soundManager.setup({
         url: 'http://player.tryphon.eu/swf',
         debugMode: true,
         useHTML5Audio: true,
+        preferFlash: true,
+        flashVersion: 9,
         onready: function() {
           return $.each(players, function(index, player) {
             return player.register();
           });
         }
       });
+      return soundManager.flash9Options = {
+        usePeakData: true
+      };
     };
 
     Player.prototype.view_root = function() {
@@ -130,12 +139,14 @@
       }
     };
 
-    Player.prototype.whileplaying = function() {};
-
     Player.prototype.statusChanged = function(status) {
       if (status === "playing") {
         return $(this.view).removeClass("play").addClass("pause");
       } else {
+        this.set_peak_data({
+          left: 0,
+          right: 0
+        });
         return $(this.view).removeClass("pause").addClass("play");
       }
     };
@@ -150,6 +161,45 @@
 
     Player.prototype.pause = function() {
       return this.sound().pause();
+    };
+
+    Player.prototype.whileplaying = function() {
+      var peak_data;
+      peak_data = this.sound().peakData;
+      if (!(peak_data && peak_data.left > 0 && peak_data.right > 0)) {
+        peak_data = this.random_peek_data();
+      }
+      return this.set_peak_data(peak_data);
+    };
+
+    Player.prototype.random_peek_data = function() {
+      var base_wave, left_right_delta, random, small_wave, time;
+      time = new Date() / 1000;
+      base_wave = (Math.sin(Math.PI * 2 * time * 250) + 1) / 5;
+      small_wave = Math.sin(Math.PI * 2 * time * (400 + Math.random() * 100)) / 6;
+      random = base_wave + small_wave;
+      left_right_delta = (Math.random() - 0.5) / 5;
+      return {
+        left: Math.max(0, Math.min(1, random)),
+        right: Math.max(0, Math.min(1, random + left_right_delta))
+      };
+    };
+
+    Player.prototype.set_peak_data = function(peakData) {
+      this.view_peak_left().css("width", "" + ((peakData.left * 100).toFixed(0)) + "%");
+      return this.view_peak_right().css("width", "" + ((peakData.right * 100).toFixed(0)) + "%");
+    };
+
+    Player.prototype.view_peak_left = function() {
+      return this._view_peak_left || (this._view_peak_left = this.view_root().find(".peak.left .level"));
+    };
+
+    Player.prototype.view_peak_right = function() {
+      return this._view_peak_right || (this._view_peak_right = this.view_root().find(".peak.right .level"));
+    };
+
+    Player.prototype.init_view_peak_bar = function() {
+      return $(this.view).after("<span class='peak left'><span class='level'></span></span><span class='peak right'><span class='level'></span></span>");
     };
 
     return Player;
@@ -179,8 +229,9 @@
       this.cast = new Tryphon.AudioBankCast(this.view.href);
       $(this.view).removeClass("tryphon-player");
       $(this.view).wrap("<div class='tryphon-player audiobank'><div class='content'></div></div>");
-      $(this.view).after("<span class='duration'></span>");
-      return $(this.view).after("<span class='bar'><span class='progress'></span></span>");
+      $(this.view).after("<span class='bar'><span class='progress'></span></span>");
+      this.init_view_peak_bar();
+      return $(this.view).after("<span class='duration'></span>");
     };
 
     AudioBank.prototype.load_attributes = function() {
@@ -240,6 +291,7 @@
     };
 
     AudioBank.prototype.whileplaying = function() {
+      AudioBank.__super__.whileplaying.call(this);
       return this.set_progress(this.sound().position / 1000.0);
     };
 
@@ -302,7 +354,8 @@
     Stream.prototype.init_view = function() {
       this.stream = new Tryphon.Stream(this.view.href);
       $(this.view).removeClass("tryphon-player");
-      return $(this.view).wrap("<div class='tryphon-player stream'><div class='content'></div></div>");
+      $(this.view).wrap("<div class='tryphon-player stream'><div class='content'></div></div>");
+      return this.init_view_peak_bar();
     };
 
     Stream.prototype.load_attributes = function() {};
