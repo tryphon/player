@@ -33,10 +33,10 @@ class @Tryphon.Player
           new Tryphon.Player.Stream(link)
 
     soundManager.setup {
-      url: 'http://player.tryphon.eu/swf',
+      url: 'http://player.tryphon.dev/swf',
       debugMode: true,
-      useHTML5Audio: true,
       preferFlash: true,
+      useHTML5Audio: true,
       flashVersion: 9,
       onready: () ->
         $.each players, (index, player) ->

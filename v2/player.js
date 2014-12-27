@@ -64,10 +64,10 @@
         })();
       });
       soundManager.setup({
-        url: 'http://player.tryphon.eu/swf',
+        url: 'http://player.tryphon.dev/swf',
         debugMode: true,
-        useHTML5Audio: true,
         preferFlash: true,
+        useHTML5Audio: true,
         flashVersion: 9,
         onready: function() {
           return $.each(players, function(index, player) {
