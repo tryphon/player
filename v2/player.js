@@ -88,8 +88,8 @@
       return $(this.view).click((function(_this) {
         return function() {
           if (_this.playing()) {
-            Tryphon.log("Pause");
-            _this.pause();
+            Tryphon.log("Unplay");
+            _this.unplay();
           } else {
             Tryphon.log("Play");
             _this.play();
@@ -141,13 +141,13 @@
 
     Player.prototype.statusChanged = function(status) {
       if (status === "playing") {
-        return $(this.view).removeClass("play").addClass("pause");
+        return $(this.view).removeClass("play").addClass(this.unplay_mode());
       } else {
         this.set_peak_data({
           left: 0,
           right: 0
         });
-        return $(this.view).removeClass("pause").addClass("play");
+        return $(this.view).removeClass(this.unplay_mode()).addClass("play");
       }
     };
 
@@ -161,6 +161,19 @@
 
     Player.prototype.pause = function() {
       return this.sound().pause();
+    };
+
+    Player.prototype.stop = function() {
+      return this.sound().stop();
+    };
+
+    Player.prototype.unplay = function() {
+      switch (this.unplay_mode()) {
+        case "stop":
+          return this.stop();
+        case "pause":
+          return this.pause();
+      }
     };
 
     Player.prototype.whileplaying = function() {
@@ -295,6 +308,10 @@
       return this.set_progress(this.sound().position / 1000.0);
     };
 
+    AudioBank.prototype.unplay_mode = function() {
+      return "pause";
+    };
+
     return AudioBank;
 
   })(Tryphon.Player);
@@ -373,6 +390,16 @@
         id: this.sound_name(),
         url: this.stream.stream_url(this.default_format())
       });
+    };
+
+    Stream.prototype.unplay_mode = function() {
+      return "stop";
+    };
+
+    Stream.prototype.unplay = function() {
+      Stream.__super__.unplay.call(this);
+      Tryphon.log("unload");
+      return this.sound().unload();
     };
 
     return Stream;

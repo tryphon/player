@@ -11,21 +11,12 @@ namespace :build do
   end
 
   namespace :soundmanager do
-
-    task :flash8 => :base do
-      sh "mtasc -swf build/soundmanager2_debug.swf -main -header 16:16:30 soundmanager/src/SoundManager2.as -version 8"
-    end
-
-    task :flash9 => :base do
-      sh "/opt/flex-sdk-4.6/bin/mxmlc -debug=true -static-link-runtime-shared-libraries=true -optimize=true -o build/soundmanager2_flash9_debug.swf -file-specs soundmanager/src/SoundManager2_AS3.as"
-    end
-
     task :xdomain => :base do
+      rm_rf "build/soundmanager2_flash_xdomain"
       Dir.chdir("build") do
-        sh "unzip -f ../soundmanager/swf/soundmanager2_flash_xdomain.zip > /dev/null"
+        sh "unzip ../soundmanager/swf/soundmanager2_flash_xdomain.zip > /dev/null"
       end
     end
-
   end
 
 end
@@ -85,8 +76,16 @@ namespace :dist do
     cp Dir["*.otf"], "dist"
     cp Dir["tune-1000.*"], "dist"
   end
+
+  task :v2 do
+    cp_r "v2", "dist"
+  end
+
+  task :fonts do
+    cp_r "fonts", "dist"
+  end
 end
 
-task :dist => [ "dist:base", "dist:soundmanager", "dist:three_sixty_player", "dist:css", "dist:javascript", "dist:html" ]
+task :dist => [ "dist:base", "dist:soundmanager", "dist:three_sixty_player", "dist:css", "dist:javascript", "dist:html", "dist:v2", "dist:fonts" ]
 
 task :default => :dist

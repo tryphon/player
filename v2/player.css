@@ -59,6 +59,8 @@
         background-image: url("play.png"); }
       .tryphon-player .content a.pause {
         background-image: url("pause.png"); }
+      .tryphon-player .content a.stop {
+        background-image: url("stop.png"); }
       .tryphon-player .content a .author {
         display: block;
         color: #aaa;

@@ -53,8 +53,8 @@ class @Tryphon.Player
   prepare_view: () =>
     $(@view).click () =>
       if @playing()
-        Tryphon.log "Pause"
-        @pause()
+        Tryphon.log "Unplay"
+        @unplay()
       else
         Tryphon.log "Play"
         @play()
@@ -79,10 +79,10 @@ class @Tryphon.Player
 
   statusChanged: (status) =>
     if status == "playing"
-      $(@view).removeClass("play").addClass("pause")
+      $(@view).removeClass("play").addClass(@unplay_mode())
     else
       @set_peak_data {left: 0, right: 0}
-      $(@view).removeClass("pause").addClass("play")
+      $(@view).removeClass(@unplay_mode()).addClass("play")
 
   playing: () ->
     @sound().playState == 1 and not @paused()
@@ -92,6 +92,14 @@ class @Tryphon.Player
 
   pause: () ->
     @sound().pause()
+
+  stop: () ->
+    @sound().stop()
+
+  unplay: () ->
+    switch @unplay_mode()
+      when "stop" then @stop()
+      when "pause" then @pause()
 
   whileplaying: () =>
     peak_data = @sound().peakData
@@ -181,6 +189,9 @@ class @Tryphon.Player.AudioBank extends Tryphon.Player
     super()
     @set_progress @sound().position / 1000.0
 
+  unplay_mode: () ->
+    "pause"
+
 class Tryphon.AudioBankCast
   constructor: (@url) ->
     @name = @url.replace(/.*\/casts\/(.+)$/g, "$1")
@@ -233,6 +244,14 @@ class @Tryphon.Player.Stream extends Tryphon.Player
 
   register: () =>
     soundManager.createSound id: @sound_name(), url: @stream.stream_url(@default_format())
+
+  unplay_mode: () ->
+    "stop"
+
+  unplay: () ->
+    super()
+    Tryphon.log "unload"
+    @sound().unload()
 
 class Tryphon.Stream
   constructor: (@url) ->

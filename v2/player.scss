@@ -92,6 +92,9 @@
             &.pause {
                 background-image: url('pause.png');
             }
+            &.stop {
+                background-image: url('stop.png');
+            }
 
             .author {
                 display: block;
