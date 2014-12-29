@@ -2,7 +2,7 @@
 
 class @Tryphon
   @log: (message) ->
-    console.log message
+    console.log message if window.console? and console.log?
 
   @duration_as_text: (duration) ->
     switch
@@ -12,6 +12,9 @@ class @Tryphon
         "#{duration // 60}:#{(duration %% 60).toFixed(0)}"
       else
         "#{duration // 3600}:#{(duration %% 3600 // 60).toFixed(0)}:#{(duration %% 60).toFixed(0)}"
+
+  @dev: () ->
+    /tryphon.dev/.test(location.href)
 
 class @Tryphon.Player
   constructor: (@view) ->
@@ -24,6 +27,12 @@ class @Tryphon.Player
   @load: () ->
     new Tryphon.Player.Loader().load()
 
+  @domain: () ->
+    if Tryphon.dev()
+      "player.tryphon.dev"
+    else
+      "player.tryphon.eu"
+
   @load_all: () ->
     players = $.map $("a.tryphon-player"), (link, index) ->
       player = switch
@@ -33,7 +42,7 @@ class @Tryphon.Player
           new Tryphon.Player.Stream(link)
 
     soundManager.setup {
-      url: 'http://player.tryphon.dev/swf',
+      url: "http://#{@domain()}/swf",
       debugMode: true,
       preferFlash: true,
       useHTML5Audio: true,
@@ -305,9 +314,10 @@ class Tryphon.Stream
 
 class Tryphon.Player.Loader
   constructor: (@domain) ->
-    @domain ||= "http://player.tryphon.dev/v2"
+    @domain ||= "http://#{Tryphon.Player.domain()}/v2"
 
   load: () ->
+    Tryphon.log "Load from #{@domain}"
     unless jQuery?
       @load_jquery @load_with_jquery
     else

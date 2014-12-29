@@ -10,7 +10,9 @@
     function Tryphon() {}
 
     Tryphon.log = function(message) {
-      return console.log(message);
+      if ((window.console != null) && (console.log != null)) {
+        return console.log(message);
+      }
     };
 
     Tryphon.duration_as_text = function(duration) {
@@ -22,6 +24,10 @@
         default:
           return "" + (Math.floor(duration / 3600)) + ":" + ((Math.floor(__modulo(duration, 3600) / 60)).toFixed(0)) + ":" + ((__modulo(duration, 60)).toFixed(0));
       }
+    };
+
+    Tryphon.dev = function() {
+      return /tryphon.dev/.test(location.href);
     };
 
     return Tryphon;
@@ -50,6 +56,14 @@
       return new Tryphon.Player.Loader().load();
     };
 
+    Player.domain = function() {
+      if (Tryphon.dev()) {
+        return "player.tryphon.dev";
+      } else {
+        return "player.tryphon.eu";
+      }
+    };
+
     Player.load_all = function() {
       var players;
       players = $.map($("a.tryphon-player"), function(link, index) {
@@ -64,7 +78,7 @@
         })();
       });
       soundManager.setup({
-        url: 'http://player.tryphon.dev/swf',
+        url: "http://" + (this.domain()) + "/swf",
         debugMode: true,
         preferFlash: true,
         useHTML5Audio: true,
@@ -489,10 +503,11 @@
     function Loader(domain) {
       this.domain = domain;
       this.load_with_jquery = __bind(this.load_with_jquery, this);
-      this.domain || (this.domain = "http://player.tryphon.dev/v2");
+      this.domain || (this.domain = "http://" + (Tryphon.Player.domain()) + "/v2");
     }
 
     Loader.prototype.load = function() {
+      Tryphon.log("Load from " + this.domain);
       if (typeof jQuery === "undefined" || jQuery === null) {
         return this.load_jquery(this.load_with_jquery);
       } else {
