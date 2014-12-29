@@ -79,6 +79,7 @@ namespace :dist do
 
   task :v2 do
     cp_r "v2", "dist"
+    sh "cat soundmanager/script/soundmanager2.js v2/player.js > dist/v2/player.js"
   end
 
   task :fonts do
