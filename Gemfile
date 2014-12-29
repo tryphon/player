@@ -7,4 +7,6 @@ group :development do
   gem 'guard'
   gem 'guard-coffeescript', github: 'guard/guard-coffeescript'
   gem 'guard-sass'
+  gem 'capistrano'
+  gem 'capistrano-scm-copy', github: "tryphon/capistrano-scm-copy"
 end
