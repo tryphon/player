@@ -235,15 +235,27 @@ class @Tryphon.Player.Stream extends Tryphon.Player
     @init_view_peak_bar()
 
   load_attributes: () ->
+    @stream.load_attributes (attributes) =>
+      @set_attributes(attributes)
+      @register()
 
-  default_format: () ->
-    "mp3"
+  set_attributes: (attributes) =>
+    $(@view).html "<span class='author'>#{attributes.name}</span>"
+
+  supported_mount_points: () =>
+    Tryphon.log @stream.mount_points
+    @_supported_mount_points ||= mount_point for mount_point in @stream.mount_points when soundManager.canPlayMIME(mount_point.content_type)
+
+  default_mount_point: () =>
+    @_default_mount_point ||= @supported_mount_points()[0]
 
   sound_name: () =>
     @stream.name
 
   register: () =>
-    soundManager.createSound id: @sound_name(), url: @stream.stream_url(@default_format())
+    if @stream.ok() and soundManager.ok() and not @registered?
+      @registered = true
+      soundManager.createSound id: @sound_name(), url: @stream.mount_point_url(@default_mount_point().path)
 
   unplay_mode: () ->
     "stop"
@@ -255,7 +267,8 @@ class @Tryphon.Player.Stream extends Tryphon.Player
 
 class Tryphon.Stream
   constructor: (@url) ->
-    @name = @url.replace(/.*stream.tryphon.eu\/(.+)$/g, "$1")
+    @name = @url.replace(/.*stream.tryphon.(eu|dev)\/(.+)$/g, "$2")
+    @base_url = @url.replace(/^(.*stream.tryphon.(dev|eu))\/.*/g, "$1")
 
   stream_url: (format, options = {}) ->
     # query = ""
@@ -269,6 +282,9 @@ class Tryphon.Stream
 
     "#{@url}.#{format}"
 
+  mount_point_url: (path) ->
+    "#{@base_url}/#{path}"
+
   load_attributes: (callback) =>
     request = new XMLHttpRequest()
 
@@ -277,12 +293,15 @@ class Tryphon.Stream
     request.setRequestHeader 'Content-type', 'application/json'
     request.onload = () =>
       attributes = request.response
-      @duration = attributes.duration
+      @mount_points = attributes.mount_points
       Tryphon.log "Retrieved attributes from #{@stream_url('json')}"
       callback(attributes) if callback
 
     Tryphon.log "Load attributes from #{@stream_url('json')}"
     request.send null
+
+  ok: () ->
+    @mount_points?
 
 class Tryphon.Player.Loader
   constructor: (@domain) ->

@@ -361,6 +361,9 @@
     function Stream() {
       this.register = __bind(this.register, this);
       this.sound_name = __bind(this.sound_name, this);
+      this.default_mount_point = __bind(this.default_mount_point, this);
+      this.supported_mount_points = __bind(this.supported_mount_points, this);
+      this.set_attributes = __bind(this.set_attributes, this);
       return Stream.__super__.constructor.apply(this, arguments);
     }
 
@@ -375,10 +378,35 @@
       return this.init_view_peak_bar();
     };
 
-    Stream.prototype.load_attributes = function() {};
+    Stream.prototype.load_attributes = function() {
+      return this.stream.load_attributes((function(_this) {
+        return function(attributes) {
+          _this.set_attributes(attributes);
+          return _this.register();
+        };
+      })(this));
+    };
 
-    Stream.prototype.default_format = function() {
-      return "mp3";
+    Stream.prototype.set_attributes = function(attributes) {
+      return $(this.view).html("<span class='author'>" + attributes.name + "</span>");
+    };
+
+    Stream.prototype.supported_mount_points = function() {
+      var mount_point, _i, _len, _ref, _results;
+      Tryphon.log(this.stream.mount_points);
+      _ref = this.stream.mount_points;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        mount_point = _ref[_i];
+        if (soundManager.canPlayMIME(mount_point.content_type)) {
+          _results.push(this._supported_mount_points || (this._supported_mount_points = mount_point));
+        }
+      }
+      return _results;
+    };
+
+    Stream.prototype.default_mount_point = function() {
+      return this._default_mount_point || (this._default_mount_point = this.supported_mount_points()[0]);
     };
 
     Stream.prototype.sound_name = function() {
@@ -386,10 +414,13 @@
     };
 
     Stream.prototype.register = function() {
-      return soundManager.createSound({
-        id: this.sound_name(),
-        url: this.stream.stream_url(this.default_format())
-      });
+      if (this.stream.ok() && soundManager.ok() && (this.registered == null)) {
+        this.registered = true;
+        return soundManager.createSound({
+          id: this.sound_name(),
+          url: this.stream.mount_point_url(this.default_mount_point().path)
+        });
+      }
     };
 
     Stream.prototype.unplay_mode = function() {
@@ -410,7 +441,8 @@
     function Stream(url) {
       this.url = url;
       this.load_attributes = __bind(this.load_attributes, this);
-      this.name = this.url.replace(/.*stream.tryphon.eu\/(.+)$/g, "$1");
+      this.name = this.url.replace(/.*stream.tryphon.(eu|dev)\/(.+)$/g, "$2");
+      this.base_url = this.url.replace(/^(.*stream.tryphon.(dev|eu))\/.*/g, "$1");
     }
 
     Stream.prototype.stream_url = function(format, options) {
@@ -418,6 +450,10 @@
         options = {};
       }
       return "" + this.url + "." + format;
+    };
+
+    Stream.prototype.mount_point_url = function(path) {
+      return "" + this.base_url + "/" + path;
     };
 
     Stream.prototype.load_attributes = function(callback) {
@@ -430,7 +466,7 @@
         return function() {
           var attributes;
           attributes = request.response;
-          _this.duration = attributes.duration;
+          _this.mount_points = attributes.mount_points;
           Tryphon.log("Retrieved attributes from " + (_this.stream_url('json')));
           if (callback) {
             return callback(attributes);
@@ -439,6 +475,10 @@
       })(this);
       Tryphon.log("Load attributes from " + (this.stream_url('json')));
       return request.send(null);
+    };
+
+    Stream.prototype.ok = function() {
+      return this.mount_points != null;
     };
 
     return Stream;
