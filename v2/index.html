@@ -6,6 +6,14 @@
     <meta charset='utf-8'>
     <script src="player.js"></script>
     <link rel="stylesheet" href="screen.css" type="text/css"/>
+
+    <script>
+      Tryphon.Player.setup({
+        // "url_rewriter": function(url) {
+        //  return "/token?url=" + encodeURIComponent(url);
+        // }
+      })
+    </script>
   </head>
   <body onload="Tryphon.Player.load()">
     <p>

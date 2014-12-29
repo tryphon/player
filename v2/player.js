@@ -35,6 +35,14 @@
   })();
 
   this.Tryphon.Player = (function() {
+    Player.setup = function(options) {
+      return this.url_rewriter = options.url_rewriter, options;
+    };
+
+    Player.url_rewriter = function(url) {
+      return url;
+    };
+
     function Player(view) {
       this.view = view;
       this.init_view_peak_bar = __bind(this.init_view_peak_bar, this);
@@ -92,6 +100,17 @@
       return soundManager.flash9Options = {
         usePeakData: true
       };
+    };
+
+    Player.prototype.create_sound = function(url) {
+      if (Tryphon.Player.url_rewriter != null) {
+        url = Tryphon.Player.url_rewriter(url);
+      }
+      Tryphon.log("Create Sound " + (this.sound_name()) + " for " + url);
+      return soundManager.createSound({
+        id: this.sound_name(),
+        url: url
+      });
     };
 
     Player.prototype.view_root = function() {
@@ -307,14 +326,11 @@
     };
 
     AudioBank.prototype.sound_name = function() {
-      return this.cast.name;
+      return "audiobank/" + this.cast.name;
     };
 
     AudioBank.prototype.register = function() {
-      return soundManager.createSound({
-        id: this.sound_name(),
-        url: this.cast.audiobank_url(this.default_format())
-      });
+      return this.create_sound(this.cast.audiobank_url(this.default_format()));
     };
 
     AudioBank.prototype.whileplaying = function() {
@@ -424,16 +440,13 @@
     };
 
     Stream.prototype.sound_name = function() {
-      return this.stream.name;
+      return "stream/" + this.stream.name;
     };
 
     Stream.prototype.register = function() {
       if (this.stream.ok() && soundManager.ok() && (this.registered == null)) {
         this.registered = true;
-        return soundManager.createSound({
-          id: this.sound_name(),
-          url: this.stream.mount_point_url(this.default_mount_point().path)
-        });
+        return this.create_sound(this.stream.mount_point_url(this.default_mount_point().path));
       }
     };
 

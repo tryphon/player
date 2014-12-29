@@ -1,6 +1,8 @@
 # A sample Guardfile
 # More info at https://github.com/guard/guard#readme
 
+ignore %r{^dist/}
+
 input_dir = '.'
 coffeescript_options = {
   input: input_dir,

@@ -17,6 +17,13 @@ class @Tryphon
     /tryphon.dev/.test(location.href)
 
 class @Tryphon.Player
+
+  @setup: (options) ->
+    {@url_rewriter} = options
+
+  @url_rewriter: (url) ->
+    url
+
   constructor: (@view) ->
     Tryphon.log "Create Player for #{@view}"
 
@@ -55,6 +62,11 @@ class @Tryphon.Player
     soundManager.flash9Options = {
       usePeakData: true
     }
+
+  create_sound: (url) ->
+    url = Tryphon.Player.url_rewriter(url) if Tryphon.Player.url_rewriter?
+    Tryphon.log "Create Sound #{@sound_name()} for #{url}"
+    soundManager.createSound id: @sound_name(), url: url
 
   view_root: () =>
     @_parent ||= $(@view).parent().parent()
@@ -189,10 +201,10 @@ class @Tryphon.Player.AudioBank extends Tryphon.Player
       "mp3"
 
   sound_name: () =>
-    @cast.name
+    "audiobank/#{@cast.name}"
 
   register: () =>
-    soundManager.createSound id: @sound_name(), url: @cast.audiobank_url(@default_format())
+    @create_sound @cast.audiobank_url(@default_format())
 
   whileplaying: () =>
     super()
@@ -259,12 +271,12 @@ class @Tryphon.Player.Stream extends Tryphon.Player
     @_default_mount_point ||= @supported_mount_points()[0]
 
   sound_name: () =>
-    @stream.name
+    "stream/#{@stream.name}"
 
   register: () =>
     if @stream.ok() and soundManager.ok() and not @registered?
       @registered = true
-      soundManager.createSound id: @sound_name(), url: @stream.mount_point_url(@default_mount_point().path)
+      @create_sound @stream.mount_point_url(@default_mount_point().path)
 
   unplay_mode: () ->
     "stop"
