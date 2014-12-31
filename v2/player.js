@@ -383,6 +383,7 @@
     function Stream() {
       this.register = __bind(this.register, this);
       this.sound_name = __bind(this.sound_name, this);
+      this.prefered_moint_point = __bind(this.prefered_moint_point, this);
       this.default_mount_point = __bind(this.default_mount_point, this);
       this.supported_mount_points = __bind(this.supported_mount_points, this);
       this.set_attributes = __bind(this.set_attributes, this);
@@ -414,21 +415,40 @@
     };
 
     Stream.prototype.supported_mount_points = function() {
-      var mount_point, _i, _len, _ref, _results;
-      Tryphon.log(this.stream.mount_points);
-      _ref = this.stream.mount_points;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        mount_point = _ref[_i];
-        if (soundManager.canPlayMIME(mount_point.content_type)) {
-          _results.push(this._supported_mount_points || (this._supported_mount_points = mount_point));
+      var mount_point;
+      Tryphon.log($.map(this.stream.mount_points, function(mount_point) {
+        return mount_point.content_type;
+      }));
+      return this._supported_mount_points || (this._supported_mount_points = (function() {
+        var _i, _len, _ref, _results;
+        _ref = this.stream.mount_points;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          mount_point = _ref[_i];
+          if (soundManager.canPlayMIME(mount_point.content_type)) {
+            _results.push(mount_point);
+          }
         }
-      }
-      return _results;
+        return _results;
+      }).call(this));
     };
 
     Stream.prototype.default_mount_point = function() {
-      return this._default_mount_point || (this._default_mount_point = this.supported_mount_points()[0]);
+      return this._default_mount_point || (this._default_mount_point = this.prefered_moint_point());
+    };
+
+    Stream.prototype.prefered_moint_point = function() {
+      var mount_point, _i, _len, _ref;
+      _ref = this.supported_mount_points();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        mount_point = _ref[_i];
+        Tryphon.log("Test " + mount_point.path + " " + mount_point.content_type);
+        if (/^audio\/ogg/.test(mount_point.content_type)) {
+          Tryphon.log("Prefer Ogg/Vorbis stream");
+          return mount_point;
+        }
+      }
+      return this.supported_mount_points()[0];
     };
 
     Stream.prototype.sound_name = function() {

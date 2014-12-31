@@ -256,11 +256,21 @@ class @Tryphon.Player.Stream extends Tryphon.Player
     $(@view).html "<span class='author'>#{attributes.name}</span>"
 
   supported_mount_points: () =>
-    Tryphon.log @stream.mount_points
-    @_supported_mount_points ||= mount_point for mount_point in @stream.mount_points when soundManager.canPlayMIME(mount_point.content_type)
+    Tryphon.log($.map @stream.mount_points, (mount_point) ->
+      mount_point.content_type
+    )
+    @_supported_mount_points ||= (mount_point for mount_point in @stream.mount_points when soundManager.canPlayMIME(mount_point.content_type))
 
   default_mount_point: () =>
-    @_default_mount_point ||= @supported_mount_points()[0]
+    @_default_mount_point ||= @prefered_moint_point()
+
+  prefered_moint_point: () =>
+    for mount_point in @supported_mount_points()
+      Tryphon.log "Test #{mount_point.path} #{mount_point.content_type}"
+      if /^audio\/ogg/.test(mount_point.content_type)
+        Tryphon.log "Prefer Ogg/Vorbis stream"
+        return mount_point
+    @supported_mount_points()[0]
 
   sound_name: () =>
     "stream/#{@stream.name}"
