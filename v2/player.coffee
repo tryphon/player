@@ -342,7 +342,7 @@ class Tryphon.Player.Loader
     Tryphon.Player.load_all()
 
   load_css: () ->
-    $('head').append("<link rel='stylesheet' type='text/css' href='#{@resource_url('player.css')}'/>")
+    $('head').prepend("<link rel='stylesheet' type='text/css' href='#{@resource_url('player.css')}'/>")
 
   resource_url: (path) ->
     "#{@domain}/#{path}"

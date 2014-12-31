@@ -535,7 +535,7 @@
     };
 
     Loader.prototype.load_css = function() {
-      return $('head').append("<link rel='stylesheet' type='text/css' href='" + (this.resource_url('player.css')) + "'/>");
+      return $('head').prepend("<link rel='stylesheet' type='text/css' href='" + (this.resource_url('player.css')) + "'/>");
     };
 
     Loader.prototype.resource_url = function(path) {
