@@ -7,7 +7,7 @@
 .tryphon-player {
   height: 100px;
   max-width: 650px;
-  margin: 20px 0;
+  margin: 20px auto;
   border-radius: 7px;
   box-shadow: 0px 0px 0px 1px rgba(255, 255, 255, 0.5) inset;
   position: relative;
