@@ -361,24 +361,16 @@
     };
 
     AudioBankCast.prototype.load_attributes = function(callback) {
-      var request;
-      request = new XMLHttpRequest();
-      request.open("GET", this.audiobank_url("json"), true);
-      request.responseType = "json";
-      request.setRequestHeader('Content-type', 'application/json');
-      request.onload = (function(_this) {
-        return function() {
-          var attributes;
-          attributes = request.response;
+      Tryphon.log("Load attributes from " + (this.audiobank_url('json')));
+      return $.get(this.audiobank_url("json"), (function(_this) {
+        return function(attributes) {
           _this.duration = attributes.duration;
           Tryphon.log("Retrieved attributes from " + (_this.audiobank_url('json')));
           if (callback) {
             return callback(attributes);
           }
         };
-      })(this);
-      Tryphon.log("Load attributes from " + (this.audiobank_url('json')));
-      return request.send(null);
+      })(this));
     };
 
     return AudioBankCast;
@@ -484,24 +476,16 @@
     };
 
     Stream.prototype.load_attributes = function(callback) {
-      var request;
-      request = new XMLHttpRequest();
-      request.open("GET", this.stream_url("json"), true);
-      request.responseType = "json";
-      request.setRequestHeader('Content-type', 'application/json');
-      request.onload = (function(_this) {
-        return function() {
-          var attributes;
-          attributes = request.response;
+      Tryphon.log("Load attributes from " + (this.stream_url('json')));
+      return $.get(this.stream_url('json'), (function(_this) {
+        return function(attributes) {
           _this.mount_points = attributes.mount_points;
           Tryphon.log("Retrieved attributes from " + (_this.stream_url('json')));
           if (callback) {
             return callback(attributes);
           }
         };
-      })(this);
-      Tryphon.log("Load attributes from " + (this.stream_url('json')));
-      return request.send(null);
+      })(this));
     };
 
     Stream.prototype.ok = function() {

@@ -230,19 +230,11 @@ class Tryphon.AudioBankCast
     "#{@url}.#{format}"
 
   load_attributes: (callback) =>
-    request = new XMLHttpRequest()
-
-    request.open "GET", @audiobank_url("json"), true
-    request.responseType = "json"
-    request.setRequestHeader 'Content-type', 'application/json'
-    request.onload = () =>
-      attributes = request.response
+    Tryphon.log "Load attributes from #{@audiobank_url('json')}"
+    $.get @audiobank_url("json"), (attributes) =>
       @duration = attributes.duration
       Tryphon.log "Retrieved attributes from #{@audiobank_url('json')}"
       callback(attributes) if callback
-
-    Tryphon.log "Load attributes from #{@audiobank_url('json')}"
-    request.send null
 
 class @Tryphon.Player.Stream extends Tryphon.Player
   @support_url : (url) ->
@@ -307,19 +299,11 @@ class Tryphon.Stream
     "#{@base_url}/#{path}"
 
   load_attributes: (callback) =>
-    request = new XMLHttpRequest()
-
-    request.open "GET", @stream_url("json"), true
-    request.responseType = "json"
-    request.setRequestHeader 'Content-type', 'application/json'
-    request.onload = () =>
-      attributes = request.response
+    Tryphon.log "Load attributes from #{@stream_url('json')}"
+    $.get @stream_url('json'), (attributes) =>
       @mount_points = attributes.mount_points
       Tryphon.log "Retrieved attributes from #{@stream_url('json')}"
       callback(attributes) if callback
-
-    Tryphon.log "Load attributes from #{@stream_url('json')}"
-    request.send null
 
   ok: () ->
     @mount_points?
