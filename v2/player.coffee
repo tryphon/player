@@ -53,6 +53,7 @@ class @Tryphon.Player
       debugMode: true,
       preferFlash: true,
       useHTML5Audio: true,
+      html5PollingInterval: 100,
       flashVersion: 9,
       onready: () ->
         $.each players, (index, player) ->
