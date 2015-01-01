@@ -39,6 +39,8 @@
     background: url("audiobank.png") no-repeat 5% 50%; }
   .tryphon-player.stream .content {
     background: url("stream.png") no-repeat 5% 50%; }
+  .tryphon-player.stream .content .peak .level {
+    background-color: #ae0000; }
   .tryphon-player .content {
     position: absolute;
     top: 5px;
@@ -85,13 +87,13 @@
       position: absolute;
       left: 180px;
       right: 55px;
-      bottom: 10px;
-      height: 5px;
+      bottom: 5px;
+      height: 8px;
       background-color: #aaa;
       display: inline-block;
       border-radius: 3px; }
       .tryphon-player .content .bar .progress {
-        background-color: #fff;
+        background-color: #72da00;
         display: inline-block;
         width: 0;
         height: 100%; }
@@ -100,7 +102,6 @@
       bottom: 18px;
       height: 3px;
       width: 202px;
-      background-color: #fff;
       display: inline-block;
       border-radius: 3px; }
       .tryphon-player .content .peak.left {
@@ -109,7 +110,7 @@
       .tryphon-player .content .peak.right {
         right: 55px; }
       .tryphon-player .content .peak .level {
-        background-color: #aaa;
+        background-color: #86bde8;
         display: inline-block;
         width: 0;
         height: 100%; }
