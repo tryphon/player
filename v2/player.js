@@ -260,7 +260,9 @@
       this.whileplaying = __bind(this.whileplaying, this);
       this.register = __bind(this.register, this);
       this.sound_name = __bind(this.sound_name, this);
+      this.view_bar = __bind(this.view_bar, this);
       this.progress = __bind(this.progress, this);
+      this.prepare_view = __bind(this.prepare_view, this);
       this.set_progress = __bind(this.set_progress, this);
       this.set_duration = __bind(this.set_duration, this);
       this.view_duration = __bind(this.view_duration, this);
@@ -314,8 +316,27 @@
       return this.set_duration(this.cast.duration - position);
     };
 
+    AudioBank.prototype.prepare_view = function() {
+      AudioBank.__super__.prepare_view.apply(this, arguments);
+      return this.view_bar().click((function(_this) {
+        return function(event) {
+          var new_position, position_ratio, relative_position;
+          if (_this.sound().readyState !== 0) {
+            relative_position = event.pageX - _this.view_bar().offset().left;
+            position_ratio = relative_position / _this.view_bar().width();
+            new_position = position_ratio * _this.cast.duration * 1000;
+            return _this.sound().setPosition(new_position);
+          }
+        };
+      })(this));
+    };
+
     AudioBank.prototype.progress = function() {
       return this._progress || (this._progress = this.view_root().find(".progress"));
+    };
+
+    AudioBank.prototype.view_bar = function() {
+      return this._bar || (this._bar = this.view_root().find(".bar"));
     };
 
     AudioBank.prototype.default_format = function() {

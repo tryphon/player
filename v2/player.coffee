@@ -192,8 +192,21 @@ class @Tryphon.Player.AudioBank extends Tryphon.Player
 
     @set_duration(@cast.duration - position)
 
+  prepare_view: () =>
+    super
+    @view_bar().click (event) =>
+      unless @sound().readyState == 0
+        relative_position = event.pageX - @view_bar().offset().left
+
+        position_ratio = relative_position / @view_bar().width()
+        new_position = position_ratio * @cast.duration * 1000
+        @sound().setPosition(new_position)
+
   progress: () =>
     @_progress ||= @view_root().find(".progress")
+
+  view_bar: () =>
+    @_bar ||= @view_root().find(".bar")
 
   default_format: () ->
     if soundManager.canPlayMIME("audio/ogg")
