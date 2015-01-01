@@ -273,8 +273,8 @@
 
     AudioBank.prototype.init_view = function() {
       this.cast = new Tryphon.AudioBankCast(this.view.href);
-      $(this.view).removeClass("tryphon-player");
-      $(this.view).wrap("<div class='tryphon-player audiobank'><div class='content'></div></div>");
+      $(this.view).wrap("<div class='audiobank " + ($(this.view).attr('class')) + "'><div class='content'></div></div>");
+      $(this.view).attr("class", "");
       $(this.view).after("<span class='bar'><span class='progress'></span></span>");
       this.init_view_peak_bar();
       return $(this.view).after("<span class='duration'></span>");
@@ -396,8 +396,8 @@
 
     Stream.prototype.init_view = function() {
       this.stream = new Tryphon.Stream(this.view.href);
-      $(this.view).removeClass("tryphon-player");
-      $(this.view).wrap("<div class='tryphon-player stream'><div class='content'></div></div>");
+      $(this.view).wrap("<div class='stream " + ($(this.view).attr('class')) + "'><div class='content'></div></div>");
+      $(this.view).attr("class", "");
       return this.init_view_peak_bar();
     };
 
@@ -416,9 +416,6 @@
 
     Stream.prototype.supported_mount_points = function() {
       var mount_point;
-      Tryphon.log($.map(this.stream.mount_points, function(mount_point) {
-        return mount_point.content_type;
-      }));
       return this._supported_mount_points || (this._supported_mount_points = (function() {
         var _i, _len, _ref, _results;
         _ref = this.stream.mount_points;
@@ -442,7 +439,6 @@
       _ref = this.supported_mount_points();
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         mount_point = _ref[_i];
-        Tryphon.log("Test " + mount_point.path + " " + mount_point.content_type);
         if (/^audio\/ogg/.test(mount_point.content_type)) {
           Tryphon.log("Prefer Ogg/Vorbis stream");
           return mount_point;
