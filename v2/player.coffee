@@ -184,8 +184,8 @@ class @Tryphon.Player
     $(@view).after("<span class='peak left'><span class='level'></span></span><span class='peak right'><span class='level'></span></span>")
 
   popup: () ->
-    url = @rewrite_url(@view.attr("href"))
-    window.open(url, "Tryphon Player", "width=#{@view_root().width()},height=#{@view_root().height()},scrollbars=no,titlebar=no,status=no,location=no,menubar=no");
+    url = @rewrite_url(@url())
+    window.open(url, "Tryphon Player", "width=#{@view_root().width()},height=#{@view_root().height()},scrollbars=no,titlebar=no,status=no,location=no,menubar=no")
 
 class @Tryphon.Player.AudioBank extends Tryphon.Player
   @support_url : (url) ->
@@ -259,9 +259,13 @@ class @Tryphon.Player.AudioBank extends Tryphon.Player
   unplay_mode: () ->
     "pause"
 
+  url: () =>
+    @cast.audiobank_url()
+
 class Tryphon.AudioBankCast
   constructor: (@url) ->
-    @name = @url.replace(/.*\/casts\/(.+)$/g, "$1")
+    @name = @url.replace(/.*\/casts\/([^\.\?]+).*$/g, "$1")
+    @base_url = @url.replace(/^(.*audiobank.tryphon.(dev|eu))\/.*/g, "$1")
 
   audiobank_url: (format, options = {}) ->
     # query = ""
@@ -273,7 +277,12 @@ class Tryphon.AudioBankCast
     # if query.length > 0
     #   query = "?#{query}"
 
-    "#{@url}.#{format}"
+    extension =
+      if format?
+        ".#{format}"
+      else
+        ""
+    "#{@base_url}/casts/#{@name}#{extension}"
 
   load_attributes: (callback) =>
     Tryphon.log "Load attributes from #{@audiobank_url('json')}"
@@ -332,6 +341,9 @@ class @Tryphon.Player.Stream extends Tryphon.Player
     Tryphon.log "unload"
     @sound().unload()
 
+  url: () =>
+    @stream.stream_url()
+
 class Tryphon.Stream
   constructor: (@url) ->
     @name = @url.replace(/.*stream.tryphon.(eu|dev)\/([^\.\?]+).*/g, "$2")
@@ -348,7 +360,12 @@ class Tryphon.Stream
     # if query.length > 0
     #   query = "?#{query}"
 
-    "#{@base_url}/#{@name}.#{format}"
+    extension =
+      if format?
+        ".#{format}"
+      else
+        ""
+    "#{@base_url}/#{@name}#{extension}"
 
   mount_point_url: (path) ->
     "#{@base_url}/#{path}"

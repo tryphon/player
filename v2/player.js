@@ -275,7 +275,7 @@
 
     Player.prototype.popup = function() {
       var url;
-      url = this.rewrite_url(this.view.attr("href"));
+      url = this.rewrite_url(this.url());
       return window.open(url, "Tryphon Player", "width=" + (this.view_root().width()) + ",height=" + (this.view_root().height()) + ",scrollbars=no,titlebar=no,status=no,location=no,menubar=no");
     };
 
@@ -287,6 +287,7 @@
     __extends(AudioBank, _super);
 
     function AudioBank() {
+      this.url = __bind(this.url, this);
       this.whileplaying = __bind(this.whileplaying, this);
       this.register = __bind(this.register, this);
       this.sound_name = __bind(this.sound_name, this);
@@ -398,6 +399,10 @@
       return "pause";
     };
 
+    AudioBank.prototype.url = function() {
+      return this.cast.audiobank_url();
+    };
+
     return AudioBank;
 
   })(Tryphon.Player);
@@ -406,14 +411,17 @@
     function AudioBankCast(url) {
       this.url = url;
       this.load_attributes = __bind(this.load_attributes, this);
-      this.name = this.url.replace(/.*\/casts\/(.+)$/g, "$1");
+      this.name = this.url.replace(/.*\/casts\/([^\.\?]+).*$/g, "$1");
+      this.base_url = this.url.replace(/^(.*audiobank.tryphon.(dev|eu))\/.*/g, "$1");
     }
 
     AudioBankCast.prototype.audiobank_url = function(format, options) {
+      var extension;
       if (options == null) {
         options = {};
       }
-      return "" + this.url + "." + format;
+      extension = format != null ? "." + format : "";
+      return "" + this.base_url + "/casts/" + this.name + extension;
     };
 
     AudioBankCast.prototype.load_attributes = function(callback) {
@@ -437,6 +445,7 @@
     __extends(Stream, _super);
 
     function Stream() {
+      this.url = __bind(this.url, this);
       this.register = __bind(this.register, this);
       this.sound_name = __bind(this.sound_name, this);
       this.prefered_moint_point = __bind(this.prefered_moint_point, this);
@@ -528,6 +537,10 @@
       return this.sound().unload();
     };
 
+    Stream.prototype.url = function() {
+      return this.stream.stream_url();
+    };
+
     return Stream;
 
   })(Tryphon.Player);
@@ -542,10 +555,12 @@
     }
 
     Stream.prototype.stream_url = function(format, options) {
+      var extension;
       if (options == null) {
         options = {};
       }
-      return "" + this.base_url + "/" + this.name + "." + format;
+      extension = format != null ? "." + format : "";
+      return "" + this.base_url + "/" + this.name + extension;
     };
 
     Stream.prototype.mount_point_url = function(path) {
