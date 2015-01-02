@@ -30,6 +30,19 @@
       return /tryphon.dev/.test(location.href);
     };
 
+    Tryphon.parse_query = function(url) {
+      var params, part, part_sides, parts, query, _i, _len;
+      query = url.replace(/.*\?(.*)$/g, "$1");
+      parts = query.split("&");
+      params = {};
+      for (_i = 0, _len = parts.length; _i < _len; _i++) {
+        part = parts[_i];
+        part_sides = part.split('=');
+        params[part_sides[0]] = part_sides[1];
+      }
+      return params;
+    };
+
     return Tryphon;
 
   })();
@@ -55,6 +68,8 @@
       this.prepare_view = __bind(this.prepare_view, this);
       this.view_initialized = __bind(this.view_initialized, this);
       this.view_root = __bind(this.view_root, this);
+      this.token = __bind(this.token, this);
+      this.query_params = __bind(this.query_params, this);
       Tryphon.log("Create Player for " + this.view);
       this.init();
       if (!this.view_initialized()) {
@@ -122,11 +137,22 @@
     };
 
     Player.prototype.rewrite_url = function(url) {
+      if (this.token() != null) {
+        url = "" + url + "?token=" + (this.token());
+      }
       if (Tryphon.Player.url_rewriter != null) {
         return Tryphon.Player.url_rewriter(url);
       } else {
         return url;
       }
+    };
+
+    Player.prototype.query_params = function() {
+      return this._query_params || (this._query_params = Tryphon.parse_query(this.view.attr('href')));
+    };
+
+    Player.prototype.token = function() {
+      return this.query_params["token"];
     };
 
     Player.prototype.view_root = function() {

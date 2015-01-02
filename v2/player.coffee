@@ -16,6 +16,17 @@ class @Tryphon
   @dev: () ->
     /tryphon.dev/.test(location.href)
 
+  @parse_query: (url) ->
+    query = url.replace(/.*\?(.*)$/g, "$1")
+    parts = query.split("&")
+
+    params = {}
+    for part in parts
+      part_sides = part.split('=')
+      params[part_sides[0]] = part_sides[1]
+
+    params
+
 class @Tryphon.Player
 
   @setup: (options) ->
@@ -84,10 +95,19 @@ class @Tryphon.Player
     soundManager.createSound id: @sound_name(), url: url
 
   rewrite_url: (url) ->
+    # Token can be provided in original link (iframe/popup)
+    if @token()?
+      url = "#{url}?token=#{@token()}"
     if Tryphon.Player.url_rewriter?
       Tryphon.Player.url_rewriter url
     else
       url
+
+  query_params: () =>
+    @_query_params ||= Tryphon.parse_query @view.attr('href')
+
+  token: () =>
+    @query_params["token"]
 
   view_root: () =>
     @_parent ||= @view.parent().parent()
@@ -169,7 +189,6 @@ class @Tryphon.Player
       left: Math.max(0, Math.min(1, random)),
       right: Math.max(0, Math.min(1, random + left_right_delta))
     }
-
 
   set_peak_data: (peakData) =>
     @view_peak_left().css("width", "#{(peakData.left * 100).toFixed(0)}%")
