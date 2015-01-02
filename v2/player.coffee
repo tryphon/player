@@ -27,7 +27,12 @@ class @Tryphon.Player
   constructor: (@view) ->
     Tryphon.log "Create Player for #{@view}"
 
-    @init_view()
+    @init()
+    unless @view_initialized()
+      @init_view()
+    else
+      Tryphon.log "View already initialized"
+
     @load_attributes()
     @prepare_view()
 
@@ -41,11 +46,20 @@ class @Tryphon.Player
       "player.tryphon.eu"
 
   @load_all: () ->
-    players = $.map $("a.tryphon-player"), (link, index) ->
+    players = $.map $(".tryphon-player"), (element, index) ->
+      element = $(element)
+      link =
+        if element.prop("tagName") == "A"
+          element
+        else
+          element.find("a")
+
+      Tryphon.log "Found player for #{link.attr('href')}"
+
       player = switch
-        when Tryphon.Player.AudioBank.support_url(link.href)
+        when Tryphon.Player.AudioBank.support_url(link.attr('href'))
           new Tryphon.Player.AudioBank(link)
-        when Tryphon.Player.Stream.support_url(link.href)
+        when Tryphon.Player.Stream.support_url(link.attr('href'))
           new Tryphon.Player.Stream(link)
 
     soundManager.setup {
@@ -70,7 +84,10 @@ class @Tryphon.Player
     soundManager.createSound id: @sound_name(), url: url
 
   view_root: () =>
-    @_parent ||= $(@view).parent().parent()
+    @_parent ||= @view.parent().parent()
+
+  view_initialized: () =>
+    $(@view).closest("div.tryphon-player").length > 0
 
   prepare_view: () =>
     $(@view).click () =>
@@ -81,6 +98,9 @@ class @Tryphon.Player
         Tryphon.log "Play"
         @play()
       false
+
+    @view_root().find(".popup").click () =>
+      @popup()
 
   sound: () =>
     soundManager.getSoundById @sound_name()
@@ -157,18 +177,23 @@ class @Tryphon.Player
   init_view_peak_bar: () =>
     $(@view).after("<span class='peak left'><span class='level'></span></span><span class='peak right'><span class='level'></span></span>")
 
+  popup: () ->
+    window.open(@view.attr("href"), "Tryphon Player", "width=#{@view_root().width()},height=#{@view_root().height()},scrollbars=no,titlebar=no,status=no,location=no,menubar=no");
+
 class @Tryphon.Player.AudioBank extends Tryphon.Player
   @support_url : (url) ->
     /audiobank.tryphon.(eu|dev)/.test(url)
 
-  init_view: () ->
-    @cast = new Tryphon.AudioBankCast(@view.href)
+  init: () ->
+    @cast = new Tryphon.AudioBankCast(@view.attr('href'))
 
+  init_view: () ->
     $(@view).wrap("<div class='audiobank #{$(@view).attr('class')}'><div class='content'></div></div>")
     $(@view).attr("class", "")
     $(@view).after("<span class='bar'><span class='progress'></span></span>")
     @init_view_peak_bar()
     $(@view).after("<span class='duration'></span>")
+    $(@view).after("<span class='popup'></span>")
 
   load_attributes: () ->
     @cast.load_attributes (attributes) =>
@@ -254,12 +279,14 @@ class @Tryphon.Player.Stream extends Tryphon.Player
   @support_url : (url) ->
     /stream.tryphon.(eu|dev)/.test(url)
 
-  init_view: () ->
-    @stream = new Tryphon.Stream(@view.href)
+  init: () ->
+    @stream = new Tryphon.Stream(@view.attr('href'))
 
+  init_view: () ->
     $(@view).wrap("<div class='stream #{$(@view).attr('class')}'><div class='content'></div></div>")
     $(@view).attr("class", "")
     @init_view_peak_bar()
+    $(@view).after("<span class='popup'></span>")
 
   load_attributes: () ->
     @stream.load_attributes (attributes) =>

@@ -13,7 +13,11 @@
   position: relative;
   background: #333;
   color: #fff;
-  font: 12px/1.4 URWGothicLRegular,"Lucida Grande","Lucida Sans Unicode","Lucida Sans",Garuda,Verdana,Tahoma,sans-serif; }
+  font: 12px/1.4 URWGothicLRegular,"Lucida Grande","Lucida Sans Unicode","Lucida Sans",Garuda,Verdana,Tahoma,sans-serif;
+  /* &.frame { */
+  /*     border-radius: 0; */
+  /*     box-shadow: none; */
+  /* } */ }
   .tryphon-player html, .tryphon-player body, .tryphon-player div, .tryphon-player span, .tryphon-player applet, .tryphon-player object, .tryphon-player iframe,
   .tryphon-player h1, .tryphon-player h2, .tryphon-player h3, .tryphon-player h4, .tryphon-player h5, .tryphon-player h6, .tryphon-player p, .tryphon-player blockquote, .tryphon-player pre,
   .tryphon-player a, .tryphon-player abbr, .tryphon-player acronym, .tryphon-player address, .tryphon-player big, .tryphon-player cite, .tryphon-player code,
@@ -75,6 +79,13 @@
         line-height: 18px;
         font-weight: 400;
         color: #fff; }
+    .tryphon-player .content .popup {
+      background: url("popup.png") no-repeat 50% 50%;
+      height: 16px;
+      width: 16px;
+      position: absolute;
+      top: 0;
+      right: 1px; }
     .tryphon-player .content .duration {
       position: absolute;
       right: 5px;
@@ -94,7 +105,7 @@
       border-radius: 3px; }
       .tryphon-player .content .bar .progress {
         background-color: #72da00;
-        display: inline-block;
+        display: block;
         width: 0;
         height: 100%; }
     .tryphon-player .content .peak {

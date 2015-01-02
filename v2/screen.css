@@ -1,3 +1,8 @@
 .tryphon-player {
     // border: 1px solid red;
 }
+
+iframe {
+    margin: 0 auto;
+    display: block;
+}

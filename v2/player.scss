@@ -52,6 +52,11 @@
     font: 12px/1.4 URWGothicLRegular,"Lucida Grande","Lucida Sans Unicode","Lucida Sans",Garuda,Verdana,Tahoma,sans-serif;
     // text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.9);
 
+    /* &.frame { */
+    /*     border-radius: 0; */
+    /*     box-shadow: none; */
+    /* } */
+
     &.audiobank {
         .content {
             background: url('audiobank.png') no-repeat 5% 50%;
@@ -116,6 +121,15 @@
             }
         }
 
+        .popup {
+            background: url('popup.png') no-repeat 50% 50%;
+            height: 16px;
+            width: 16px;
+            position: absolute;
+            top: 0;
+            right: 1px;
+        }
+
         .duration {
             position: absolute;
             right: 5px;
@@ -140,7 +154,7 @@
 
             .progress {
                 background-color: #72da00;
-                display: inline-block;
+                display: block;
                 width: 0;
                 height: 100%;
             }
