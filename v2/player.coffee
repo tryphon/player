@@ -79,9 +79,15 @@ class @Tryphon.Player
     }
 
   create_sound: (url) ->
-    url = Tryphon.Player.url_rewriter(url) if Tryphon.Player.url_rewriter?
+    url = @rewrite_url url
     Tryphon.log "Create Sound #{@sound_name()} for #{url}"
     soundManager.createSound id: @sound_name(), url: url
+
+  rewrite_url: (url) ->
+    if Tryphon.Player.url_rewriter?
+      Tryphon.Player.url_rewriter url
+    else
+      url
 
   view_root: () =>
     @_parent ||= @view.parent().parent()
@@ -178,7 +184,8 @@ class @Tryphon.Player
     $(@view).after("<span class='peak left'><span class='level'></span></span><span class='peak right'><span class='level'></span></span>")
 
   popup: () ->
-    window.open(@view.attr("href"), "Tryphon Player", "width=#{@view_root().width()},height=#{@view_root().height()},scrollbars=no,titlebar=no,status=no,location=no,menubar=no");
+    url = @rewrite_url(@view.attr("href"))
+    window.open(url, "Tryphon Player", "width=#{@view_root().width()},height=#{@view_root().height()},scrollbars=no,titlebar=no,status=no,location=no,menubar=no");
 
 class @Tryphon.Player.AudioBank extends Tryphon.Player
   @support_url : (url) ->
@@ -327,7 +334,8 @@ class @Tryphon.Player.Stream extends Tryphon.Player
 
 class Tryphon.Stream
   constructor: (@url) ->
-    @name = @url.replace(/.*stream.tryphon.(eu|dev)\/(.+)$/g, "$2")
+    @name = @url.replace(/.*stream.tryphon.(eu|dev)\/([^\.\?]+).*/g, "$2")
+    Tryphon.log "Stream #{@name}"
     @base_url = @url.replace(/^(.*stream.tryphon.(dev|eu))\/.*/g, "$1")
 
   stream_url: (format, options = {}) ->
@@ -340,7 +348,7 @@ class Tryphon.Stream
     # if query.length > 0
     #   query = "?#{query}"
 
-    "#{@url}.#{format}"
+    "#{@base_url}/#{@name}.#{format}"
 
   mount_point_url: (path) ->
     "#{@base_url}/#{path}"

@@ -113,14 +113,20 @@
     };
 
     Player.prototype.create_sound = function(url) {
-      if (Tryphon.Player.url_rewriter != null) {
-        url = Tryphon.Player.url_rewriter(url);
-      }
+      url = this.rewrite_url(url);
       Tryphon.log("Create Sound " + (this.sound_name()) + " for " + url);
       return soundManager.createSound({
         id: this.sound_name(),
         url: url
       });
+    };
+
+    Player.prototype.rewrite_url = function(url) {
+      if (Tryphon.Player.url_rewriter != null) {
+        return Tryphon.Player.url_rewriter(url);
+      } else {
+        return url;
+      }
     };
 
     Player.prototype.view_root = function() {
@@ -268,7 +274,9 @@
     };
 
     Player.prototype.popup = function() {
-      return window.open(this.view.attr("href"), "Tryphon Player", "width=" + (this.view_root().width()) + ",height=" + (this.view_root().height()) + ",scrollbars=no,titlebar=no,status=no,location=no,menubar=no");
+      var url;
+      url = this.rewrite_url(this.view.attr("href"));
+      return window.open(url, "Tryphon Player", "width=" + (this.view_root().width()) + ",height=" + (this.view_root().height()) + ",scrollbars=no,titlebar=no,status=no,location=no,menubar=no");
     };
 
     return Player;
@@ -528,7 +536,8 @@
     function Stream(url) {
       this.url = url;
       this.load_attributes = __bind(this.load_attributes, this);
-      this.name = this.url.replace(/.*stream.tryphon.(eu|dev)\/(.+)$/g, "$2");
+      this.name = this.url.replace(/.*stream.tryphon.(eu|dev)\/([^\.\?]+).*/g, "$2");
+      Tryphon.log("Stream " + this.name);
       this.base_url = this.url.replace(/^(.*stream.tryphon.(dev|eu))\/.*/g, "$1");
     }
 
@@ -536,7 +545,7 @@
       if (options == null) {
         options = {};
       }
-      return "" + this.url + "." + format;
+      return "" + this.base_url + "/" + this.name + "." + format;
     };
 
     Stream.prototype.mount_point_url = function(path) {

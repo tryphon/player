@@ -9,9 +9,11 @@
 
     <script>
       Tryphon.Player.setup({
-        // "url_rewriter": function(url) {
-        //  return "/token?url=" + encodeURIComponent(url);
-        // }
+        "url_rewriter": function(url) {
+          Tryphon.log("Rewrite " + url)
+          return url + "?token=dummy"
+          // return "/token?url=" + encodeURIComponent(url);
+        }
       })
     </script>
   </head>
@@ -30,7 +32,7 @@ Eu eos aeterno fuisset scriptorem, eirmod veritus ullamcorper mea ea. Nam in cib
 
     <iframe width="650px" height="100px" scrolling="no" frameborder="no" src="http://audiobank.tryphon.eu/casts/oopamhls"></iframe>
 
-    <a class="tryphon-player" href="http://beta-stream.tryphon.eu/fildeleau"></a>
+    <a class="tryphon-player" href="http://beta-stream.tryphon.eu/fildeleau?dummy"></a>
 
     <iframe width="650px" height="100px" scrolling="no" frameborder="no" src="http://beta-stream.tryphon.eu/fildeleau"></iframe>
 
