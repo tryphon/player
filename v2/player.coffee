@@ -94,9 +94,10 @@ class @Tryphon.Player
     Tryphon.log "Create Sound #{@sound_name()} for #{url}"
     soundManager.createSound id: @sound_name(), url: url
 
-  rewrite_url: (url) ->
-    # Token can be provided in original link (iframe/popup)
+  rewrite_url: (url) =>
+    # Token can be provided in original link (in iframe/popup)
     if @token()?
+      Tryphon.log "Include token from config : #{@token()}"
       url = "#{url}?token=#{@token()}"
     if Tryphon.Player.url_rewriter?
       Tryphon.Player.url_rewriter url
@@ -107,7 +108,7 @@ class @Tryphon.Player
     @_query_params ||= Tryphon.parse_query @view.attr('href')
 
   token: () =>
-    @query_params["token"]
+    @query_params()["token"]
 
   view_root: () =>
     @_parent ||= @view.parent().parent()

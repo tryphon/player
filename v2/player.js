@@ -70,6 +70,7 @@
       this.view_root = __bind(this.view_root, this);
       this.token = __bind(this.token, this);
       this.query_params = __bind(this.query_params, this);
+      this.rewrite_url = __bind(this.rewrite_url, this);
       Tryphon.log("Create Player for " + this.view);
       this.init();
       if (!this.view_initialized()) {
@@ -138,6 +139,7 @@
 
     Player.prototype.rewrite_url = function(url) {
       if (this.token() != null) {
+        Tryphon.log("Include token from config : " + (this.token()));
         url = "" + url + "?token=" + (this.token());
       }
       if (Tryphon.Player.url_rewriter != null) {
@@ -152,7 +154,7 @@
     };
 
     Player.prototype.token = function() {
-      return this.query_params["token"];
+      return this.query_params()["token"];
     };
 
     Player.prototype.view_root = function() {
