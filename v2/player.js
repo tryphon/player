@@ -101,7 +101,7 @@
       players = $.map($(".tryphon-player"), function(element, index) {
         var link, player;
         element = $(element);
-        link = element.prop("tagName") === "A" ? element : element.find("a");
+        link = element.prop("tagName") === "A" ? element : element.find("a.main");
         Tryphon.log("Found player for " + (link.attr('href')));
         return player = (function() {
           switch (false) {
@@ -396,7 +396,7 @@
     };
 
     AudioBank.prototype.set_attributes = function(attributes) {
-      $(this.view).html("<span class='author'>" + attributes.author + "</span><span class='title'>" + attributes.title + "</span>");
+      this.view.html("<span class='author'>" + attributes.author + "</span><span class='title'>" + attributes.title + "</span>");
       this.set_duration(attributes.duration);
       Tryphon.Player.include_player_css(attributes.player_css_url);
       return $.each(attributes.tags, (function(_this) {

@@ -63,7 +63,7 @@ class @Tryphon.Player
         if element.prop("tagName") == "A"
           element
         else
-          element.find("a")
+          element.find("a.main")
 
       Tryphon.log "Found player for #{link.attr('href')}"
 
@@ -250,7 +250,7 @@ class @Tryphon.Player.AudioBank extends Tryphon.Player
     @create_links()
 
   set_attributes: (attributes) =>
-    $(@view).html "<span class='author'>#{attributes.author}</span><span class='title'>#{attributes.title}</span>"
+    @view.html "<span class='author'>#{attributes.author}</span><span class='title'>#{attributes.title}</span>"
     @set_duration(attributes.duration)
     Tryphon.Player.include_player_css attributes.player_css_url
     $.each attributes.tags, (index, tag) =>
