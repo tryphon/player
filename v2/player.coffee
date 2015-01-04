@@ -89,6 +89,13 @@ class @Tryphon.Player
       usePeakData: true
     }
 
+  @include_player_css: (url) ->
+    if url? and url.length > 0
+      unless @_included_player_css?
+        @_included_player_css = true
+        Tryphon.log "Include custom CSS : #{url}"
+        $('head').append("<link rel='stylesheet' type='text/css' href='#{url}'/>")
+
   create_sound: (url) ->
     url = @rewrite_url url
     Tryphon.log "Create Sound #{@sound_name()} for #{url}"
@@ -126,8 +133,13 @@ class @Tryphon.Player
         @play()
       false
 
-    @view_root().find(".popup").click () =>
+    @view_root().find(".popup").click (event) =>
+      event.preventDefault()
       @popup()
+
+    @view_links().find("a").mousedown (event) =>
+      link = event.target
+      link.href = @rewrite_url($(link).data('link'))
 
   sound: () =>
     soundManager.getSoundById @sound_name()
@@ -200,12 +212,22 @@ class @Tryphon.Player
   view_peak_right: () =>
     @_view_peak_right ||= @view_root().find(".peak.right .level")
 
-  init_view_peak_bar: () =>
+  init_base_view: () =>
     $(@view).after("<span class='peak left'><span class='level'></span></span><span class='peak right'><span class='level'></span></span>")
+    $(@view).after("<a class='popup' href='#{@url()}' target='_blank'></a>")
+    $(@view).after("<span class='links'></span>")
+
+  view_links: () =>
+    @_view_links ||= @view_root().find(".links")
 
   popup: () ->
     url = @rewrite_url(@url())
     window.open(url, "Tryphon Player", "width=#{@view_root().width()},height=#{@view_root().height()},scrollbars=no,titlebar=no,status=no,location=no,menubar=no")
+
+  create_links: () =>
+    Tryphon.log "Create Links"
+    for link in @links()
+      @view_links().append("<a href=\"#{link.url}.m3u\" data-link=\"#{link.url}.m3u\" target=\"_blank\">#{link.name}</a>")
 
 class @Tryphon.Player.AudioBank extends Tryphon.Player
   @support_url : (url) ->
@@ -216,19 +238,20 @@ class @Tryphon.Player.AudioBank extends Tryphon.Player
 
   init_view: () ->
     $(@view).wrap("<div class='audiobank #{$(@view).attr('class')}'><div class='content'></div></div>")
-    $(@view).attr("class", "")
+    $(@view).attr("class", "main")
     $(@view).after("<span class='bar'><span class='progress'></span></span>")
-    @init_view_peak_bar()
+    @init_base_view()
     $(@view).after("<span class='duration'></span>")
-    $(@view).after("<span class='popup'></span>")
 
   load_attributes: () ->
     @cast.load_attributes (attributes) =>
       @set_attributes(attributes)
+    @create_links()
 
   set_attributes: (attributes) =>
     $(@view).html "<span class='author'>#{attributes.author}</span><span class='title'>#{attributes.title}</span>"
     @set_duration(attributes.duration)
+    Tryphon.Player.include_player_css attributes.player_css_url
     $.each attributes.tags, (index, tag) =>
       @view_root().addClass("audiobank-#{tag}")
 
@@ -282,6 +305,18 @@ class @Tryphon.Player.AudioBank extends Tryphon.Player
   url: () =>
     @cast.audiobank_url()
 
+  links: () =>
+    [
+      {
+        name: "MP3",
+        url: @cast.audiobank_url("mp3")
+      },
+      {
+        name: "Ogg/Vorbis",
+        url: @cast.audiobank_url("ogg")
+      }
+    ]
+
 class Tryphon.AudioBankCast
   constructor: (@url) ->
     @name = @url.replace(/.*\/casts\/([^\.\?]+).*$/g, "$1")
@@ -320,17 +355,18 @@ class @Tryphon.Player.Stream extends Tryphon.Player
 
   init_view: () ->
     $(@view).wrap("<div class='stream #{$(@view).attr('class')}'><div class='content'></div></div>")
-    $(@view).attr("class", "")
-    @init_view_peak_bar()
-    $(@view).after("<span class='popup'></span>")
+    $(@view).attr("class", "main")
+    @init_base_view()
 
   load_attributes: () ->
     @stream.load_attributes (attributes) =>
       @set_attributes(attributes)
+      @create_links()
       @register()
 
   set_attributes: (attributes) =>
     $(@view).html "<span class='author'>#{attributes.name}</span>"
+    Tryphon.Player.include_player_css attributes.player_css_url
 
   supported_mount_points: () =>
     @_supported_mount_points ||= (mount_point for mount_point in @stream.mount_points when soundManager.canPlayMIME(mount_point.content_type))
@@ -363,6 +399,13 @@ class @Tryphon.Player.Stream extends Tryphon.Player
 
   url: () =>
     @stream.stream_url()
+
+  links: () =>
+    for mount_point in @stream.mount_points
+      {
+        name: mount_point.name,
+        url: @stream.mount_point_url(mount_point.path)
+      }
 
 class Tryphon.Stream
   constructor: (@url) ->

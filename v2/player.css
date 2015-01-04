@@ -51,7 +51,7 @@
     left: 5px;
     right: 5px;
     bottom: 5px; }
-    .tryphon-player .content a {
+    .tryphon-player .content a.main {
       background: url("play.png") no-repeat center left;
       display: inline-block;
       position: absolute;
@@ -61,20 +61,20 @@
       padding-left: 60px;
       text-decoration: none;
       outline: 0; }
-      .tryphon-player .content a.play {
+      .tryphon-player .content a.main.play {
         background-image: url("play.png"); }
-      .tryphon-player .content a.pause {
+      .tryphon-player .content a.main.pause {
         background-image: url("pause.png"); }
-      .tryphon-player .content a.stop {
+      .tryphon-player .content a.main.stop {
         background-image: url("stop.png"); }
-      .tryphon-player .content a .author {
+      .tryphon-player .content a.main .author {
         display: block;
         color: #aaa;
         margin-bottom: 1px;
         font-weight: 100;
         margin-top: 5px;
         font-size: 14px; }
-      .tryphon-player .content a .title {
+      .tryphon-player .content a.main .title {
         font-size: 14px;
         line-height: 18px;
         font-weight: 400;
@@ -125,3 +125,15 @@
         display: inline-block;
         width: 0;
         height: 100%; }
+    .tryphon-player .content .links {
+      position: absolute;
+      top: 1px;
+      right: 20px;
+      height: 20px;
+      width: 150px;
+      text-align: right; }
+      .tryphon-player .content .links a {
+        color: #aaa;
+        margin-right: 0.5em;
+        padding-right: 5px;
+        background: url("external.png") no-repeat 100% 0%; }

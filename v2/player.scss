@@ -79,7 +79,7 @@
         right: 5px;
         bottom: 5px;
 
-        a {
+        a.main {
             background: url('play.png') no-repeat center left;
             display: inline-block;
 
@@ -160,6 +160,7 @@
             }
         }
 
+
         .peak {
             position: absolute;
             bottom: 18px;
@@ -184,7 +185,23 @@
             }
         }
 
+        .links {
+            position: absolute;
+            top: 1px;
+            right: 20px;
+            height: 20px;
+            width: 150px;
 
+            text-align: right;
+
+            a {
+                color: #aaa;
+                margin-right: 0.5em;
+                padding-right: 5px;
+
+                background: url('external.png') no-repeat 100% 0%;
+            }
+        }
     }
 
 }

@@ -58,7 +58,9 @@
 
     function Player(view) {
       this.view = view;
-      this.init_view_peak_bar = __bind(this.init_view_peak_bar, this);
+      this.create_links = __bind(this.create_links, this);
+      this.view_links = __bind(this.view_links, this);
+      this.init_base_view = __bind(this.init_base_view, this);
       this.view_peak_right = __bind(this.view_peak_right, this);
       this.view_peak_left = __bind(this.view_peak_left, this);
       this.set_peak_data = __bind(this.set_peak_data, this);
@@ -128,6 +130,16 @@
       };
     };
 
+    Player.include_player_css = function(url) {
+      if ((url != null) && url.length > 0) {
+        if (this._included_player_css == null) {
+          this._included_player_css = true;
+          Tryphon.log("Include custom CSS : " + url);
+          return $('head').append("<link rel='stylesheet' type='text/css' href='" + url + "'/>");
+        }
+      }
+    };
+
     Player.prototype.create_sound = function(url) {
       url = this.rewrite_url(url);
       Tryphon.log("Create Sound " + (this.sound_name()) + " for " + url);
@@ -178,9 +190,17 @@
           return false;
         };
       })(this));
-      return this.view_root().find(".popup").click((function(_this) {
-        return function() {
+      this.view_root().find(".popup").click((function(_this) {
+        return function(event) {
+          event.preventDefault();
           return _this.popup();
+        };
+      })(this));
+      return this.view_links().find("a").mousedown((function(_this) {
+        return function(event) {
+          var link;
+          link = event.target;
+          return link.href = _this.rewrite_url($(link).data('link'));
         };
       })(this));
     };
@@ -297,14 +317,32 @@
       return this._view_peak_right || (this._view_peak_right = this.view_root().find(".peak.right .level"));
     };
 
-    Player.prototype.init_view_peak_bar = function() {
-      return $(this.view).after("<span class='peak left'><span class='level'></span></span><span class='peak right'><span class='level'></span></span>");
+    Player.prototype.init_base_view = function() {
+      $(this.view).after("<span class='peak left'><span class='level'></span></span><span class='peak right'><span class='level'></span></span>");
+      $(this.view).after("<a class='popup' href='" + (this.url()) + "' target='_blank'></a>");
+      return $(this.view).after("<span class='links'></span>");
+    };
+
+    Player.prototype.view_links = function() {
+      return this._view_links || (this._view_links = this.view_root().find(".links"));
     };
 
     Player.prototype.popup = function() {
       var url;
       url = this.rewrite_url(this.url());
       return window.open(url, "Tryphon Player", "width=" + (this.view_root().width()) + ",height=" + (this.view_root().height()) + ",scrollbars=no,titlebar=no,status=no,location=no,menubar=no");
+    };
+
+    Player.prototype.create_links = function() {
+      var link, _i, _len, _ref, _results;
+      Tryphon.log("Create Links");
+      _ref = this.links();
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        link = _ref[_i];
+        _results.push(this.view_links().append("<a href=\"" + link.url + ".m3u\" data-link=\"" + link.url + ".m3u\" target=\"_blank\">" + link.name + "</a>"));
+      }
+      return _results;
     };
 
     return Player;
@@ -315,6 +353,7 @@
     __extends(AudioBank, _super);
 
     function AudioBank() {
+      this.links = __bind(this.links, this);
       this.url = __bind(this.url, this);
       this.whileplaying = __bind(this.whileplaying, this);
       this.register = __bind(this.register, this);
@@ -339,24 +378,25 @@
 
     AudioBank.prototype.init_view = function() {
       $(this.view).wrap("<div class='audiobank " + ($(this.view).attr('class')) + "'><div class='content'></div></div>");
-      $(this.view).attr("class", "");
+      $(this.view).attr("class", "main");
       $(this.view).after("<span class='bar'><span class='progress'></span></span>");
-      this.init_view_peak_bar();
-      $(this.view).after("<span class='duration'></span>");
-      return $(this.view).after("<span class='popup'></span>");
+      this.init_base_view();
+      return $(this.view).after("<span class='duration'></span>");
     };
 
     AudioBank.prototype.load_attributes = function() {
-      return this.cast.load_attributes((function(_this) {
+      this.cast.load_attributes((function(_this) {
         return function(attributes) {
           return _this.set_attributes(attributes);
         };
       })(this));
+      return this.create_links();
     };
 
     AudioBank.prototype.set_attributes = function(attributes) {
       $(this.view).html("<span class='author'>" + attributes.author + "</span><span class='title'>" + attributes.title + "</span>");
       this.set_duration(attributes.duration);
+      Tryphon.Player.include_player_css(attributes.player_css_url);
       return $.each(attributes.tags, (function(_this) {
         return function(index, tag) {
           return _this.view_root().addClass("audiobank-" + tag);
@@ -431,6 +471,18 @@
       return this.cast.audiobank_url();
     };
 
+    AudioBank.prototype.links = function() {
+      return [
+        {
+          name: "MP3",
+          url: this.cast.audiobank_url("mp3")
+        }, {
+          name: "Ogg/Vorbis",
+          url: this.cast.audiobank_url("ogg")
+        }
+      ];
+    };
+
     return AudioBank;
 
   })(Tryphon.Player);
@@ -473,6 +525,7 @@
     __extends(Stream, _super);
 
     function Stream() {
+      this.links = __bind(this.links, this);
       this.url = __bind(this.url, this);
       this.register = __bind(this.register, this);
       this.sound_name = __bind(this.sound_name, this);
@@ -493,22 +546,23 @@
 
     Stream.prototype.init_view = function() {
       $(this.view).wrap("<div class='stream " + ($(this.view).attr('class')) + "'><div class='content'></div></div>");
-      $(this.view).attr("class", "");
-      this.init_view_peak_bar();
-      return $(this.view).after("<span class='popup'></span>");
+      $(this.view).attr("class", "main");
+      return this.init_base_view();
     };
 
     Stream.prototype.load_attributes = function() {
       return this.stream.load_attributes((function(_this) {
         return function(attributes) {
           _this.set_attributes(attributes);
+          _this.create_links();
           return _this.register();
         };
       })(this));
     };
 
     Stream.prototype.set_attributes = function(attributes) {
-      return $(this.view).html("<span class='author'>" + attributes.name + "</span>");
+      $(this.view).html("<span class='author'>" + attributes.name + "</span>");
+      return Tryphon.Player.include_player_css(attributes.player_css_url);
     };
 
     Stream.prototype.supported_mount_points = function() {
@@ -567,6 +621,20 @@
 
     Stream.prototype.url = function() {
       return this.stream.stream_url();
+    };
+
+    Stream.prototype.links = function() {
+      var mount_point, _i, _len, _ref, _results;
+      _ref = this.stream.mount_points;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        mount_point = _ref[_i];
+        _results.push({
+          name: mount_point.name,
+          url: this.stream.mount_point_url(mount_point.path)
+        });
+      }
+      return _results;
     };
 
     return Stream;
