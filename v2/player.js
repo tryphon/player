@@ -74,6 +74,7 @@
       this.query_params = __bind(this.query_params, this);
       this.rewrite_url = __bind(this.rewrite_url, this);
       Tryphon.log("Create Player for " + this.view);
+      this.autoplay = this.view.hasClass("autoplay");
       this.init();
       if (!this.view_initialized()) {
         this.init_view();
@@ -145,10 +146,13 @@
     Player.prototype.create_sound = function(url) {
       url = this.rewrite_url(url);
       Tryphon.log("Create Sound " + (this.sound_name()) + " for " + url);
-      return soundManager.createSound({
+      soundManager.createSound({
         id: this.sound_name(),
         url: url
       });
+      if (this.autoplay) {
+        return this.play();
+      }
     };
 
     Player.prototype.rewrite_url = function(url) {
