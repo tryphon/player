@@ -49,7 +49,7 @@
 
   this.Tryphon.Player = (function() {
     Player.setup = function(options) {
-      return this.url_rewriter = options.url_rewriter, options;
+      return this.url_rewriter = options.url_rewriter, this.ignore_player_css_url = options.ignore_player_css_url, options;
     };
 
     Player.url_rewriter = function(url) {
@@ -131,11 +131,13 @@
     };
 
     Player.include_player_css = function(url) {
-      if ((url != null) && url.length > 0) {
-        if (this._included_player_css == null) {
-          this._included_player_css = true;
-          Tryphon.log("Include custom CSS : " + url);
-          return $('head').append("<link rel='stylesheet' type='text/css' href='" + url + "'/>");
+      if (!this.ignore_player_css_url) {
+        if ((url != null) && url.length > 0) {
+          if (this._included_player_css == null) {
+            this._included_player_css = true;
+            Tryphon.log("Include custom CSS : " + url);
+            return $('head').append("<link rel='stylesheet' type='text/css' href='" + url + "'/>");
+          }
         }
       }
     };

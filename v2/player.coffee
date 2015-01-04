@@ -30,7 +30,7 @@ class @Tryphon
 class @Tryphon.Player
 
   @setup: (options) ->
-    {@url_rewriter} = options
+    {@url_rewriter, @ignore_player_css_url} = options
 
   @url_rewriter: (url) ->
     url
@@ -90,11 +90,12 @@ class @Tryphon.Player
     }
 
   @include_player_css: (url) ->
-    if url? and url.length > 0
-      unless @_included_player_css?
-        @_included_player_css = true
-        Tryphon.log "Include custom CSS : #{url}"
-        $('head').append("<link rel='stylesheet' type='text/css' href='#{url}'/>")
+    unless @ignore_player_css_url
+      if url? and url.length > 0
+        unless @_included_player_css?
+          @_included_player_css = true
+          Tryphon.log "Include custom CSS : #{url}"
+          $('head').append("<link rel='stylesheet' type='text/css' href='#{url}'/>")
 
   create_sound: (url) ->
     url = @rewrite_url url
