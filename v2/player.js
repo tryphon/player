@@ -334,9 +334,17 @@
     };
 
     Player.prototype.popup = function() {
-      var url;
+      var height, url, width;
       url = this.rewrite_url(this.url());
-      return window.open(url, "Tryphon Player", "width=" + (this.view_root().width()) + ",height=" + (this.view_root().height()) + ",scrollbars=no,titlebar=no,status=no,location=no,menubar=no");
+      if ($('.tryphon-player').length > 0) {
+        width = $('.tryphon-player').css("width");
+        height = $('.tryphon-player').css("height");
+      } else {
+        width = this.view_root().width();
+        height = this.view_root().height();
+      }
+      Tryphon.log("Popup with width=" + width + ",height=" + height);
+      return window.open(url, "Tryphon Player", "width=" + width + ",height=" + height + ",scrollbars=no,titlebar=no,status=no,location=no,menubar=no");
     };
 
     Player.prototype.create_links = function() {
