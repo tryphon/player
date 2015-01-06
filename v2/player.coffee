@@ -58,6 +58,9 @@ class @Tryphon.Player
     else
       "player.tryphon.eu"
 
+  @sound_manager_ok: () ->
+    @sound_manager_ready
+
   @load_all: () ->
     players = $.map $(".tryphon-player"), (element, index) ->
       element = $(element)
@@ -82,7 +85,8 @@ class @Tryphon.Player
       useHTML5Audio: true,
       html5PollingInterval: 100,
       flashVersion: 9,
-      onready: () ->
+      onready: () =>
+        @sound_manager_ready = true
         $.each players, (index, player) ->
           player.register()
     }
@@ -399,9 +403,10 @@ class @Tryphon.Player.Stream extends Tryphon.Player
     "stream/#{@stream.name}"
 
   register: () =>
-    if @stream.ok() and soundManager.ok() and not @registered?
+    if @stream.ok() and Tryphon.Player.sound_manager_ok() and not @registered?
       @registered = true
       @create_sound @stream.mount_point_url(@default_mount_point().path)
+
 
   unplay_mode: () ->
     "stop"
