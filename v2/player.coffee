@@ -62,7 +62,7 @@ class @Tryphon.Player
     @sound_manager_ready
 
   @load_all: () ->
-    players = $.map $(".tryphon-player"), (element, index) ->
+    @players = $.map $(".tryphon-player"), (element, index) ->
       element = $(element)
       link =
         if element.prop("tagName") == "A"
@@ -78,6 +78,14 @@ class @Tryphon.Player
         when Tryphon.Player.Stream.support_url(link.attr('href'))
           new Tryphon.Player.Stream(link)
 
+    if document.readyState == "complete"
+      @sound_manager_setup()
+    else
+      document.onreadystatechange = () =>
+        @sound_manager_setup() if document.readyState == "complete"
+
+  @sound_manager_setup: () =>
+    Tryphon.log "SoundManager setup"
     soundManager.setup {
       url: "http://#{@domain()}/swf",
       debugMode: true,
@@ -87,7 +95,7 @@ class @Tryphon.Player
       flashVersion: 9,
       onready: () =>
         @sound_manager_ready = true
-        $.each players, (index, player) ->
+        $.each @players, (index, player) ->
           player.register()
     }
 

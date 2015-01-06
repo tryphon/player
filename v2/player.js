@@ -102,8 +102,7 @@
     };
 
     Player.load_all = function() {
-      var players;
-      players = $.map($(".tryphon-player"), function(element, index) {
+      this.players = $.map($(".tryphon-player"), function(element, index) {
         var link, player;
         element = $(element);
         link = element.prop("tagName") === "A" ? element : element.find("a.main");
@@ -117,21 +116,34 @@
           }
         })();
       });
+      if (document.readyState === "complete") {
+        return this.sound_manager_setup();
+      } else {
+        return document.onreadystatechange = (function(_this) {
+          return function() {
+            if (document.readyState === "complete") {
+              return _this.sound_manager_setup();
+            }
+          };
+        })(this);
+      }
+    };
+
+    Player.sound_manager_setup = function() {
+      Tryphon.log("SoundManager setup");
       soundManager.setup({
-        url: "http://" + (this.domain()) + "/swf",
+        url: "http://" + (Player.domain()) + "/swf",
         debugMode: true,
         preferFlash: true,
         useHTML5Audio: true,
         html5PollingInterval: 100,
         flashVersion: 9,
-        onready: (function(_this) {
-          return function() {
-            _this.sound_manager_ready = true;
-            return $.each(players, function(index, player) {
-              return player.register();
-            });
-          };
-        })(this)
+        onready: function() {
+          Player.sound_manager_ready = true;
+          return $.each(Player.players, function(index, player) {
+            return player.register();
+          });
+        }
       });
       return soundManager.flash9Options = {
         usePeakData: true
