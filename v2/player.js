@@ -73,14 +73,14 @@
       this.token = __bind(this.token, this);
       this.query_params = __bind(this.query_params, this);
       this.rewrite_url = __bind(this.rewrite_url, this);
-      Tryphon.log("Create Player for " + this.view);
-      this.autoplay = this.view.hasClass("autoplay");
+      Tryphon.log("Create Player for " + this.view[0]);
       this.init();
       if (!this.view_initialized()) {
         this.init_view();
       } else {
         Tryphon.log("View already initialized");
       }
+      this.autoplay = this.view_root().hasClass("autoplay");
       this.load_attributes();
       this.prepare_view();
     }
@@ -170,6 +170,7 @@
         url: url
       });
       if (this.autoplay) {
+        Tryphon.log("Autoplay");
         return this.play();
       }
     };

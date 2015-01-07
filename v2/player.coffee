@@ -36,15 +36,15 @@ class @Tryphon.Player
     url
 
   constructor: (@view) ->
-    Tryphon.log "Create Player for #{@view}"
-
-    @autoplay = @view.hasClass("autoplay")
+    Tryphon.log "Create Player for #{@view[0]}"
 
     @init()
     unless @view_initialized()
       @init_view()
     else
       Tryphon.log "View already initialized"
+
+    @autoplay = @view_root().hasClass("autoplay")
 
     @load_attributes()
     @prepare_view()
@@ -115,7 +115,9 @@ class @Tryphon.Player
     url = @rewrite_url url
     Tryphon.log "Create Sound #{@sound_name()} for #{url}"
     soundManager.createSound id: @sound_name(), url: url
-    @play() if @autoplay
+    if @autoplay
+      Tryphon.log "Autoplay"
+      @play()
 
   rewrite_url: (url) =>
     # Token can be provided in original link (in iframe/popup)
