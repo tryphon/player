@@ -72,7 +72,7 @@ class @Tryphon.Player
         if element.prop("tagName") == "A"
           element
         else
-          element.find("a.main")
+          element.find("a.tp-main")
 
       Tryphon.log "Found player for #{link.attr('href')}"
 

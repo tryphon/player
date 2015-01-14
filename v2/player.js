@@ -30,7 +30,7 @@
       }
       text = "" + minutes + ":" + seconds;
       if (hours !== "00") {
-        text = "" + hour + ":" + text;
+        text = "" + hours + ":" + text;
       }
       return text;
     };
@@ -114,7 +114,7 @@
       this.players = $.map($(".tryphon-player"), function(element, index) {
         var link, player;
         element = $(element);
-        link = element.prop("tagName") === "A" ? element : element.find("a.main");
+        link = element.prop("tagName") === "A" ? element : element.find("a.tp-main");
         Tryphon.log("Found player for " + (link.attr('href')));
         return player = (function() {
           switch (false) {
