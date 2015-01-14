@@ -14,7 +14,7 @@ class @Tryphon
     seconds = "0" +seconds if seconds < 10
 
     text = "#{minutes}:#{seconds}"
-    text = "#{hour}:#{text}" unless hours == "00"
+    text = "#{hours}:#{text}" unless hours == "00"
     text
 
   @dev: () ->
