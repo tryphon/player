@@ -471,7 +471,7 @@
     };
 
     AudioBank.prototype.view_duration = function() {
-      return this._view_duration || (this._view_duration = this.find_view('duration'));
+      return this._view_duration || (this._view_duration = this.find_view('.duration'));
     };
 
     AudioBank.prototype.set_duration = function(duration) {

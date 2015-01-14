@@ -305,7 +305,7 @@ class @Tryphon.Player.AudioBank extends Tryphon.Player
       @view_root().addClass("audiobank-#{tag}")
 
   view_duration: () =>
-    @_view_duration ||= @find_view('duration')
+    @_view_duration ||= @find_view('.duration')
 
   set_duration: (duration) =>
     @view_duration().text(Tryphon.duration_as_text(duration))
