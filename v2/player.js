@@ -162,6 +162,25 @@
       }
     };
 
+    Player.prototype["class"] = function(klass) {
+      return klass.replace(/[^ ]+/g, "tp-$&");
+    };
+
+    Player.prototype.div_tag = function(klass, content) {
+      return this.content_tag("div", klass, content);
+    };
+
+    Player.prototype.span_tag = function(klass, content) {
+      return this.content_tag("span", klass, content);
+    };
+
+    Player.prototype.content_tag = function(tag, klass, content) {
+      if (content == null) {
+        content = "";
+      }
+      return "<" + tag + " class='" + (this["class"](klass)) + "'>" + content + "</" + tag + ">";
+    };
+
     Player.prototype.create_sound = function(url) {
       url = this.rewrite_url(url);
       Tryphon.log("Create Sound " + (this.sound_name()) + " for " + url);
@@ -216,7 +235,7 @@
           return false;
         };
       })(this));
-      this.view_root().find(".popup").click((function(_this) {
+      this.find_view(".popup").click((function(_this) {
         return function(event) {
           event.preventDefault();
           return _this.popup();
@@ -273,13 +292,13 @@
 
     Player.prototype.statusChanged = function(status) {
       if (status === "playing") {
-        return $(this.view).removeClass("play").addClass(this.unplay_mode());
+        return $(this.view).removeClass(this["class"]("play")).addClass(this["class"](this.unplay_mode()));
       } else {
         this.set_peak_data({
           left: 0,
           right: 0
         });
-        return $(this.view).removeClass(this.unplay_mode()).addClass("play");
+        return $(this.view).removeClass(this["class"](this.unplay_mode())).addClass(this["class"]("play"));
       }
     };
 
@@ -335,22 +354,26 @@
       return this.view_peak_right().css("width", "" + ((peakData.right * 100).toFixed(0)) + "%");
     };
 
+    Player.prototype.find_view = function(selector) {
+      return this.view_root().find(selector.replace(/\./g, "$&tp-"));
+    };
+
     Player.prototype.view_peak_left = function() {
-      return this._view_peak_left || (this._view_peak_left = this.view_root().find(".peak.left .level"));
+      return this._view_peak_left || (this._view_peak_left = this.find_view(".peak.left .level"));
     };
 
     Player.prototype.view_peak_right = function() {
-      return this._view_peak_right || (this._view_peak_right = this.view_root().find(".peak.right .level"));
+      return this._view_peak_right || (this._view_peak_right = this.find_view(".peak.right .level"));
     };
 
     Player.prototype.init_base_view = function() {
-      $(this.view).after("<span class='peak left'><span class='level'></span></span><span class='peak right'><span class='level'></span></span>");
-      $(this.view).after("<a class='popup' href='" + (this.url()) + "' target='_blank'></a>");
-      return $(this.view).after("<span class='links'></span>");
+      $(this.view).after(this.span_tag('peak left', this.span_tag('level')) + this.span_tag('peak right', this.span_tag('level')));
+      $(this.view).after("<a class='" + (this["class"]('popup')) + "' href='" + (this.url()) + "' target='_blank'></a>");
+      return $(this.view).after(this.span_tag('links'));
     };
 
     Player.prototype.view_links = function() {
-      return this._view_links || (this._view_links = this.view_root().find(".links"));
+      return this._view_links || (this._view_links = this.find_view(".links"));
     };
 
     Player.prototype.popup = function() {
@@ -411,11 +434,11 @@
     };
 
     AudioBank.prototype.init_view = function() {
-      $(this.view).wrap("<div class='audiobank " + ($(this.view).attr('class')) + "'><div class='content'></div></div>");
-      $(this.view).attr("class", "main");
-      $(this.view).after("<span class='bar'><span class='progress'></span></span>");
+      $(this.view).wrap("<div class='audiobank " + ($(this.view).attr('class')) + "'>" + (this.div_tag('content')) + "</div>");
+      $(this.view).attr("class", this["class"]("main"));
+      $(this.view).after(this.span_tag('bar', this.span_tag('progress')));
       this.init_base_view();
-      return $(this.view).after("<span class='duration'></span>");
+      return $(this.view).after(this.span_tag('duration'));
     };
 
     AudioBank.prototype.load_attributes = function() {
@@ -428,7 +451,7 @@
     };
 
     AudioBank.prototype.set_attributes = function(attributes) {
-      this.view.html("<span class='author'>" + attributes.author + "</span><span class='title'>" + attributes.title + "</span>");
+      this.view.html(this.span_tag('author', attributes.author) + this.span_tag('title', attributes.title));
       this.set_duration(attributes.duration);
       Tryphon.Player.include_player_css(attributes.player_css_url);
       return $.each(attributes.tags, (function(_this) {
@@ -439,7 +462,7 @@
     };
 
     AudioBank.prototype.view_duration = function() {
-      return this._view_duration || (this._view_duration = this.view_root().find(".duration"));
+      return this._view_duration || (this._view_duration = this.find_view('duration'));
     };
 
     AudioBank.prototype.set_duration = function(duration) {
@@ -469,11 +492,11 @@
     };
 
     AudioBank.prototype.progress = function() {
-      return this._progress || (this._progress = this.view_root().find(".progress"));
+      return this._progress || (this._progress = this.find_view(".progress"));
     };
 
     AudioBank.prototype.view_bar = function() {
-      return this._bar || (this._bar = this.view_root().find(".bar"));
+      return this._bar || (this._bar = this.find_view(".bar"));
     };
 
     AudioBank.prototype.default_format = function() {
@@ -508,7 +531,7 @@
     AudioBank.prototype.links = function() {
       return [
         {
-          name: "MP3",
+          name: "Mp3",
           url: this.cast.audiobank_url("mp3")
         }, {
           name: "Ogg/Vorbis",
@@ -579,8 +602,8 @@
     };
 
     Stream.prototype.init_view = function() {
-      $(this.view).wrap("<div class='stream " + ($(this.view).attr('class')) + "'><div class='content'></div></div>");
-      $(this.view).attr("class", "main");
+      $(this.view).wrap("<div class='stream " + ($(this.view).attr('class')) + "'>" + (this.div_tag('content')) + "</div>");
+      $(this.view).attr("class", this["class"]("main"));
       return this.init_base_view();
     };
 
@@ -595,7 +618,7 @@
     };
 
     Stream.prototype.set_attributes = function(attributes) {
-      $(this.view).html("<span class='author'>" + attributes.name + "</span>");
+      $(this.view).html(this.span_tag('author', attributes.name));
       return Tryphon.Player.include_player_css(attributes.player_css_url);
     };
 

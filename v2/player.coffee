@@ -111,6 +111,20 @@ class @Tryphon.Player
           Tryphon.log "Include custom CSS : #{url}"
           $('head').append("<link rel='stylesheet' type='text/css' href='#{url}'/>")
 
+  class: (klass) ->
+    # "peak left" => "tp-peak tp-left"
+    klass.replace(/[^ ]+/g, "tp-$&")
+
+  div_tag: (klass, content) ->
+    @content_tag "div", klass, content
+
+  span_tag: (klass, content) ->
+    @content_tag "span", klass, content
+
+  content_tag: (tag, klass, content) ->
+    content = "" unless content?
+    "<#{tag} class='#{@class(klass)}'>#{content}</#{tag}>"
+
   create_sound: (url) ->
     url = @rewrite_url url
     Tryphon.log "Create Sound #{@sound_name()} for #{url}"
@@ -151,7 +165,7 @@ class @Tryphon.Player
         @play()
       false
 
-    @view_root().find(".popup").click (event) =>
+    @find_view(".popup").click (event) =>
       event.preventDefault()
       @popup()
 
@@ -178,10 +192,10 @@ class @Tryphon.Player
 
   statusChanged: (status) =>
     if status == "playing"
-      $(@view).removeClass("play").addClass(@unplay_mode())
+      $(@view).removeClass(@class("play")).addClass(@class(@unplay_mode()))
     else
       @set_peak_data {left: 0, right: 0}
-      $(@view).removeClass(@unplay_mode()).addClass("play")
+      $(@view).removeClass(@class(@unplay_mode())).addClass(@class("play"))
 
   playing: () ->
     @sound().playState == 1 and not @paused()
@@ -225,18 +239,21 @@ class @Tryphon.Player
     @view_peak_left().css("width", "#{(peakData.left * 100).toFixed(0)}%")
     @view_peak_right().css("width", "#{(peakData.right * 100).toFixed(0)}%")
 
+  find_view: (selector) ->
+    @view_root().find(selector.replace(/\./g, "$&tp-"))
+
   view_peak_left: () =>
-    @_view_peak_left ||= @view_root().find(".peak.left .level")
+    @_view_peak_left ||= @find_view(".peak.left .level")
   view_peak_right: () =>
-    @_view_peak_right ||= @view_root().find(".peak.right .level")
+    @_view_peak_right ||= @find_view(".peak.right .level")
 
   init_base_view: () =>
-    $(@view).after("<span class='peak left'><span class='level'></span></span><span class='peak right'><span class='level'></span></span>")
-    $(@view).after("<a class='popup' href='#{@url()}' target='_blank'></a>")
-    $(@view).after("<span class='links'></span>")
+    $(@view).after(@span_tag('peak left', @span_tag('level')) + @span_tag('peak right', @span_tag('level')))
+    $(@view).after("<a class='#{@class('popup')}' href='#{@url()}' target='_blank'></a>")
+    $(@view).after(@span_tag('links'))
 
   view_links: () =>
-    @_view_links ||= @view_root().find(".links")
+    @_view_links ||= @find_view(".links")
 
   popup: () ->
     url = @rewrite_url(@url())
@@ -265,11 +282,11 @@ class @Tryphon.Player.AudioBank extends Tryphon.Player
     @cast = new Tryphon.AudioBankCast(@view.attr('href'))
 
   init_view: () ->
-    $(@view).wrap("<div class='audiobank #{$(@view).attr('class')}'><div class='content'></div></div>")
-    $(@view).attr("class", "main")
-    $(@view).after("<span class='bar'><span class='progress'></span></span>")
+    $(@view).wrap("<div class='audiobank #{$(@view).attr('class')}'>#{@div_tag('content')}</div>")
+    $(@view).attr("class", @class("main"))
+    $(@view).after(@span_tag('bar', @span_tag('progress')))
     @init_base_view()
-    $(@view).after("<span class='duration'></span>")
+    $(@view).after(@span_tag('duration'))
 
   load_attributes: () ->
     @cast.load_attributes (attributes) =>
@@ -277,14 +294,14 @@ class @Tryphon.Player.AudioBank extends Tryphon.Player
     @create_links()
 
   set_attributes: (attributes) =>
-    @view.html "<span class='author'>#{attributes.author}</span><span class='title'>#{attributes.title}</span>"
+    @view.html (@span_tag('author', attributes.author) + @span_tag('title', attributes.title))
     @set_duration(attributes.duration)
     Tryphon.Player.include_player_css attributes.player_css_url
     $.each attributes.tags, (index, tag) =>
       @view_root().addClass("audiobank-#{tag}")
 
   view_duration: () =>
-    @_view_duration ||= @view_root().find(".duration")
+    @_view_duration ||= @find_view('duration')
 
   set_duration: (duration) =>
     @view_duration().text(Tryphon.duration_as_text(duration))
@@ -306,10 +323,10 @@ class @Tryphon.Player.AudioBank extends Tryphon.Player
         @sound().setPosition(new_position)
 
   progress: () =>
-    @_progress ||= @view_root().find(".progress")
+    @_progress ||= @find_view(".progress")
 
   view_bar: () =>
-    @_bar ||= @view_root().find(".bar")
+    @_bar ||= @find_view(".bar")
 
   default_format: () ->
     if soundManager.canPlayMIME("audio/ogg")
@@ -336,7 +353,7 @@ class @Tryphon.Player.AudioBank extends Tryphon.Player
   links: () =>
     [
       {
-        name: "MP3",
+        name: "Mp3",
         url: @cast.audiobank_url("mp3")
       },
       {
@@ -382,8 +399,8 @@ class @Tryphon.Player.Stream extends Tryphon.Player
     @stream = new Tryphon.Stream(@view.attr('href'))
 
   init_view: () ->
-    $(@view).wrap("<div class='stream #{$(@view).attr('class')}'><div class='content'></div></div>")
-    $(@view).attr("class", "main")
+    $(@view).wrap("<div class='stream #{$(@view).attr('class')}'>#{@div_tag('content')}</div>")
+    $(@view).attr("class", @class("main"))
     @init_base_view()
 
   load_attributes: () ->
@@ -393,7 +410,7 @@ class @Tryphon.Player.Stream extends Tryphon.Player
       @register()
 
   set_attributes: (attributes) =>
-    $(@view).html "<span class='author'>#{attributes.name}</span>"
+    $(@view).html @span_tag('author', attributes.name)
     Tryphon.Player.include_player_css attributes.player_css_url
 
   supported_mount_points: () =>

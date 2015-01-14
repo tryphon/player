@@ -18,15 +18,7 @@
   /*     border-radius: 0; */
   /*     box-shadow: none; */
   /* } */ }
-  .tryphon-player html, .tryphon-player body, .tryphon-player div, .tryphon-player span, .tryphon-player applet, .tryphon-player object, .tryphon-player iframe,
-  .tryphon-player h1, .tryphon-player h2, .tryphon-player h3, .tryphon-player h4, .tryphon-player h5, .tryphon-player h6, .tryphon-player p, .tryphon-player blockquote, .tryphon-player pre,
-  .tryphon-player a, .tryphon-player abbr, .tryphon-player acronym, .tryphon-player address, .tryphon-player big, .tryphon-player cite, .tryphon-player code,
-  .tryphon-player del, .tryphon-player dfn, .tryphon-player em, .tryphon-player font, .tryphon-player img, .tryphon-player ins, .tryphon-player kbd, .tryphon-player q, .tryphon-player s, .tryphon-player samp,
-  .tryphon-player small, .tryphon-player strike, .tryphon-player strong, .tryphon-player sub, .tryphon-player sup, .tryphon-player tt, .tryphon-player var,
-  .tryphon-player b, .tryphon-player u, .tryphon-player i, .tryphon-player center,
-  .tryphon-player dl, .tryphon-player dt, .tryphon-player dd, .tryphon-player ol, .tryphon-player ul, .tryphon-player li,
-  .tryphon-player fieldset, .tryphon-player form, .tryphon-player label, .tryphon-player legend,
-  .tryphon-player table, .tryphon-player caption, .tryphon-player tbody, .tryphon-player tfoot, .tryphon-player thead, .tryphon-player tr, .tryphon-player th, .tryphon-player td {
+  .tryphon-player div, .tryphon-player span, .tryphon-player p, .tryphon-player a, .tryphon-player a:hover, .tryphon-player a:visited {
     margin: 0;
     padding: 0;
     border: 0;
@@ -35,23 +27,21 @@
     background: transparent;
     font-weight: normal;
     font-size: 100%;
-    color: #000; }
-  .tryphon-player a, .tryphon-player a:hover, .tryphon-player a:visited {
     color: #000;
     text-decoration: none; }
-  .tryphon-player.audiobank .content {
+  .tryphon-player.audiobank .tp-content {
     background: url("audiobank.png") no-repeat 5% 50%; }
-  .tryphon-player.stream .content {
+  .tryphon-player.stream .tp-content {
     background: url("stream.png") no-repeat 5% 50%; }
-  .tryphon-player.stream .content .peak .level {
+  .tryphon-player.stream .tp-content .tp-peak .tp-level {
     background-color: #ae0000; }
-  .tryphon-player .content {
+  .tryphon-player .tp-content {
     position: absolute;
     top: 5px;
     left: 5px;
     right: 5px;
     bottom: 5px; }
-    .tryphon-player .content a.main {
+    .tryphon-player .tp-content a.tp-main {
       background: url("play.png") no-repeat center left;
       display: inline-block;
       position: absolute;
@@ -61,32 +51,32 @@
       padding-left: 60px;
       text-decoration: none;
       outline: 0; }
-      .tryphon-player .content a.main.play {
+      .tryphon-player .tp-content a.tp-main.tp-play {
         background-image: url("play.png"); }
-      .tryphon-player .content a.main.pause {
+      .tryphon-player .tp-content a.tp-main.tp-pause {
         background-image: url("pause.png"); }
-      .tryphon-player .content a.main.stop {
+      .tryphon-player .tp-content a.tp-main.tp-stop {
         background-image: url("stop.png"); }
-      .tryphon-player .content a.main .author {
+      .tryphon-player .tp-content a.tp-main .tp-author {
         display: block;
         color: #aaa;
         margin-bottom: 1px;
         font-weight: 100;
         margin-top: 5px;
         font-size: 14px; }
-      .tryphon-player .content a.main .title {
+      .tryphon-player .tp-content a.tp-main .tp-title {
         font-size: 14px;
         line-height: 18px;
         font-weight: 400;
         color: #fff; }
-    .tryphon-player .content .popup {
+    .tryphon-player .tp-content .tp-popup {
       background: url("popup.png") no-repeat 50% 50%;
       height: 16px;
       width: 16px;
       position: absolute;
       top: 0;
       right: 1px; }
-    .tryphon-player .content .duration {
+    .tryphon-player .tp-content .tp-duration {
       position: absolute;
       right: 5px;
       bottom: 6px;
@@ -94,7 +84,7 @@
       height: 15px;
       width: 40px;
       text-align: center; }
-    .tryphon-player .content .bar {
+    .tryphon-player .tp-content .tp-bar {
       position: absolute;
       left: 180px;
       right: 55px;
@@ -103,36 +93,36 @@
       background-color: #aaa;
       display: inline-block;
       border-radius: 3px; }
-      .tryphon-player .content .bar .progress {
+      .tryphon-player .tp-content .tp-bar .tp-progress {
         background-color: #72da00;
         display: block;
         width: 0;
         height: 100%; }
-    .tryphon-player .content .peak {
+    .tryphon-player .tp-content .tp-peak {
       position: absolute;
       bottom: 18px;
       height: 3px;
       width: 202px;
       display: inline-block;
       border-radius: 3px; }
-      .tryphon-player .content .peak.left {
+      .tryphon-player .tp-content .tp-peak.tp-left {
         left: 180px;
         text-align: right; }
-      .tryphon-player .content .peak.right {
+      .tryphon-player .tp-content .tp-peak.tp-right {
         right: 55px; }
-      .tryphon-player .content .peak .level {
+      .tryphon-player .tp-content .tp-peak .tp-level {
         background-color: #86bde8;
         display: inline-block;
         width: 0;
         height: 100%; }
-    .tryphon-player .content .links {
+    .tryphon-player .tp-content .tp-links {
       position: absolute;
       top: 1px;
       right: 20px;
       height: 20px;
       width: 150px;
       text-align: right; }
-      .tryphon-player .content .links a {
+      .tryphon-player .tp-content .tp-links a {
         color: #aaa;
         margin-right: 0.5em;
         padding-right: 5px;

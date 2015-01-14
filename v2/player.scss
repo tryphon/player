@@ -9,17 +9,11 @@
     font-style: normal;
 }
 
+$prefix: tp-;
+
 .tryphon-player {
-    html, body, div, span, applet, object, iframe,
-    h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-    a, abbr, acronym, address, big, cite, code,
-    del, dfn, em, font, img, ins, kbd, q, s, samp,
-    small, strike, strong, sub, sup, tt, var,
-    b, u, i, center,
-    dl, dt, dd, ol, ul, li,
-    fieldset, form, label, legend,
-    table, caption, tbody, tfoot, thead, tr, th, td {
-	      margin: 0;
+    div, span, p, a, a:hover, a:visited {
+        margin: 0;
 	      padding: 0;
 	      border: 0;
 	      outline: 0;
@@ -27,10 +21,6 @@
 	      background: transparent;
         font-weight: normal;
         font-size: 100%;
-        color: #000;
-    }
-
-    a, a:hover, a:visited {
         color: #000;
         text-decoration: none;
     }
@@ -58,28 +48,28 @@
     /* } */
 
     &.audiobank {
-        .content {
+        .#{$prefix}content {
             background: url('audiobank.png') no-repeat 5% 50%;
         }
     }
 
     &.stream {
-        .content {
+        .#{$prefix}content {
             background: url('stream.png') no-repeat 5% 50%;
         }
-        .content .peak .level {
+        .#{$prefix}content .#{$prefix}peak .#{$prefix}level {
             background-color: #ae0000;
         }
     }
 
-    .content {
+    .#{$prefix}content {
         position: absolute;
         top: 5px;
         left: 5px;
         right: 5px;
         bottom: 5px;
 
-        a.main {
+        a.#{$prefix}main {
             background: url('play.png') no-repeat center left;
             display: inline-block;
 
@@ -94,17 +84,17 @@
             text-decoration: none;
             outline: 0;
 
-            &.play {
+            &.#{$prefix}play {
                 background-image: url('play.png');
             }
-            &.pause {
+            &.#{$prefix}pause {
                 background-image: url('pause.png');
             }
-            &.stop {
+            &.#{$prefix}stop {
                 background-image: url('stop.png');
             }
 
-            .author {
+            .#{$prefix}author {
                 display: block;
                 color: #aaa;
                 margin-bottom: 1px;
@@ -113,7 +103,7 @@
                 font-size: 14px;
             }
 
-            .title {
+            .#{$prefix}title {
                 font-size: 14px;
                 line-height: 18px;
                 font-weight: 400;
@@ -121,7 +111,7 @@
             }
         }
 
-        .popup {
+        .#{$prefix}popup {
             background: url('popup.png') no-repeat 50% 50%;
             height: 16px;
             width: 16px;
@@ -130,7 +120,7 @@
             right: 1px;
         }
 
-        .duration {
+        .#{$prefix}duration {
             position: absolute;
             right: 5px;
             bottom: 6px;
@@ -140,7 +130,7 @@
             text-align: center;
         }
 
-        .bar {
+        .#{$prefix}bar {
             position: absolute;
             left: 180px;
             right: 55px;
@@ -152,7 +142,7 @@
             display: inline-block;
             border-radius: 3px;
 
-            .progress {
+            .#{$prefix}progress {
                 background-color: #72da00;
                 display: block;
                 width: 0;
@@ -161,7 +151,7 @@
         }
 
 
-        .peak {
+        .#{$prefix}peak {
             position: absolute;
             bottom: 18px;
             height: 3px;
@@ -169,15 +159,15 @@
             display: inline-block;
             border-radius: 3px;
 
-            &.left {
+            &.#{$prefix}left {
                 left: 180px;
                 text-align: right;
             }
-            &.right {
+            &.#{$prefix}right {
                 right: 55px;
             }
 
-            .level {
+            .#{$prefix}level {
                 background-color: #86bde8;
                 display: inline-block;
                 width: 0;
@@ -185,7 +175,7 @@
             }
         }
 
-        .links {
+        .#{$prefix}links {
             position: absolute;
             top: 1px;
             right: 20px;
