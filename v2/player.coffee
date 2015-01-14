@@ -5,13 +5,17 @@ class @Tryphon
     console.log message if window.console? and console.log?
 
   @duration_as_text: (duration) ->
-    switch
-      when duration < 60
-        "#{duration.toFixed(0)}"
-      when duration < 3600
-        "#{duration // 60}:#{(duration %% 60).toFixed(0)}"
-      else
-        "#{duration // 3600}:#{(duration %% 3600 // 60).toFixed(0)}:#{(duration %% 60).toFixed(0)}"
+    hours   = Math.floor(duration / 3600)
+    minutes = Math.floor((duration - (hours * 3600)) / 60)
+    seconds = Math.floor(duration - (hours * 3600) - (minutes * 60))
+
+    hours   = "0" + hours if hours < 10
+    minutes = "0" + minutes if minutes < 10
+    seconds = "0" +seconds if seconds < 10
+
+    text = "#{minutes}:#{seconds}"
+    text = "#{hour}:#{text}" unless hours == "00"
+    text
 
   @dev: () ->
     /tryphon.dev/.test(location.href)

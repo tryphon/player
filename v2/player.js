@@ -1,6 +1,5 @@
 (function() {
-  var __modulo = function(a, b) { return (+a % (b = +b) + b) % b; },
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -16,14 +15,24 @@
     };
 
     Tryphon.duration_as_text = function(duration) {
-      switch (false) {
-        case !(duration < 60):
-          return "" + (duration.toFixed(0));
-        case !(duration < 3600):
-          return "" + (Math.floor(duration / 60)) + ":" + ((__modulo(duration, 60)).toFixed(0));
-        default:
-          return "" + (Math.floor(duration / 3600)) + ":" + ((Math.floor(__modulo(duration, 3600) / 60)).toFixed(0)) + ":" + ((__modulo(duration, 60)).toFixed(0));
+      var hours, minutes, seconds, text;
+      hours = Math.floor(duration / 3600);
+      minutes = Math.floor((duration - (hours * 3600)) / 60);
+      seconds = Math.floor(duration - (hours * 3600) - (minutes * 60));
+      if (hours < 10) {
+        hours = "0" + hours;
       }
+      if (minutes < 10) {
+        minutes = "0" + minutes;
+      }
+      if (seconds < 10) {
+        seconds = "0" + seconds;
+      }
+      text = "" + minutes + ":" + seconds;
+      if (hours !== "00") {
+        text = "" + hour + ":" + text;
+      }
+      return text;
     };
 
     Tryphon.dev = function() {
