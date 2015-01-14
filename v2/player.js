@@ -36,7 +36,7 @@
     };
 
     Tryphon.dev = function() {
-      return /tryphon.dev/.test(location.href);
+      return /tryphon.dev/.test(location.href) || this.parse_query(location.href)["dev"] === 'true';
     };
 
     Tryphon.parse_query = function(url) {

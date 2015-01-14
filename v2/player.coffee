@@ -18,7 +18,7 @@ class @Tryphon
     text
 
   @dev: () ->
-    /tryphon.dev/.test(location.href)
+    /tryphon.dev/.test(location.href) or @parse_query(location.href)["dev"] == 'true'
 
   @parse_query: (url) ->
     query = url.replace(/.*\?(.*)$/g, "$1")
