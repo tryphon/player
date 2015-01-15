@@ -28,7 +28,8 @@
     font-weight: normal;
     font-size: 100%;
     color: #000;
-    text-decoration: none; }
+    text-decoration: none;
+    text-align: left; }
   .tryphon-player.audiobank .tp-content {
     background: url("audiobank.png") no-repeat 5% 50%; }
   .tryphon-player.stream .tp-content {
