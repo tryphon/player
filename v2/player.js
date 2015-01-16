@@ -58,7 +58,7 @@
 
   this.Tryphon.Player = (function() {
     Player.setup = function(options) {
-      return this.url_rewriter = options.url_rewriter, this.ignore_player_css_url = options.ignore_player_css_url, options;
+      return this.url_rewriter = options.url_rewriter, this.ignore_player_css_url = options.ignore_player_css_url, this.ignore_base_player_css_url = options.ignore_base_player_css_url, options;
     };
 
     Player.url_rewriter = function(url) {
@@ -95,7 +95,9 @@
     }
 
     Player.load = function() {
-      return new Tryphon.Player.Loader().load();
+      return new Tryphon.Player.Loader({
+        "ignore_base_player_css_url": this.ignore_base_player_css_url
+      }).load();
     };
 
     Player.domain = function() {
@@ -143,7 +145,6 @@
       soundManager.setup({
         url: "http://" + (Player.domain()) + "/swf",
         debugMode: true,
-        preferFlash: true,
         useHTML5Audio: true,
         html5PollingInterval: 100,
         flashVersion: 9,
@@ -751,9 +752,9 @@
   })();
 
   Tryphon.Player.Loader = (function() {
-    function Loader(domain) {
-      this.domain = domain;
+    function Loader(options) {
       this.load_with_jquery = __bind(this.load_with_jquery, this);
+      this.domain = options.domain, this.ignore_base_player_css_url = options.ignore_base_player_css_url;
       this.domain || (this.domain = "http://" + (Tryphon.Player.domain()) + "/v2");
     }
 
@@ -768,7 +769,9 @@
 
     Loader.prototype.load_with_jquery = function() {
       Tryphon.log("jQuery " + jQuery.fn.jquery + " is present");
-      this.load_css();
+      if (!this.ignore_base_player_css_url) {
+        this.load_css();
+      }
       return Tryphon.Player.load_all();
     };
 

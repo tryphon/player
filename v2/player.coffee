@@ -34,7 +34,7 @@ class @Tryphon
 class @Tryphon.Player
 
   @setup: (options) ->
-    {@url_rewriter, @ignore_player_css_url} = options
+    {@url_rewriter, @ignore_player_css_url, @ignore_base_player_css_url} = options
 
   @url_rewriter: (url) ->
     url
@@ -54,7 +54,7 @@ class @Tryphon.Player
     @prepare_view()
 
   @load: () ->
-    new Tryphon.Player.Loader().load()
+    new Tryphon.Player.Loader({"ignore_base_player_css_url": @ignore_base_player_css_url}).load()
 
   @domain: () ->
     if Tryphon.dev()
@@ -93,7 +93,7 @@ class @Tryphon.Player
     soundManager.setup {
       url: "http://#{@domain()}/swf",
       debugMode: true,
-      preferFlash: true,
+      # preferFlash: true,
       useHTML5Audio: true,
       html5PollingInterval: 100,
       flashVersion: 9,
@@ -494,7 +494,8 @@ class Tryphon.Stream
     @mount_points?
 
 class Tryphon.Player.Loader
-  constructor: (@domain) ->
+  constructor: (options) ->
+    {@domain, @ignore_base_player_css_url} = options
     @domain ||= "http://#{Tryphon.Player.domain()}/v2"
 
   load: () ->
@@ -507,10 +508,11 @@ class Tryphon.Player.Loader
   load_with_jquery: () =>
     Tryphon.log "jQuery #{jQuery.fn.jquery} is present"
 
-    @load_css()
+    @load_css() unless @ignore_base_player_css_url
     Tryphon.Player.load_all()
 
   load_css: () ->
+    # if document.createStyleSheet
     $('head').prepend("<link rel='stylesheet' type='text/css' href='#{@resource_url('player.css')}'/>")
 
   resource_url: (path) ->
