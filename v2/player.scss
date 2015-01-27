@@ -181,7 +181,7 @@ $prefix: tp-;
             top: 1px;
             right: 20px;
             height: 20px;
-            width: 150px;
+            width: 250px;
 
             text-align: right;
 
@@ -189,8 +189,13 @@ $prefix: tp-;
                 color: #aaa;
                 margin-right: 0.5em;
                 padding-right: 5px;
-
-                background: url('external.png') no-repeat 100% 0%;
+                &.external {
+                    background: url('external.png') no-repeat 100% 0%;
+                }
+                &.download {
+                    padding-right: 8px;
+                    background: url('download.png') no-repeat 100% 50%;
+                }
             }
         }
     }

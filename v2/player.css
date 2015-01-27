@@ -121,10 +121,14 @@
       top: 1px;
       right: 20px;
       height: 20px;
-      width: 150px;
+      width: 250px;
       text-align: right; }
       .tryphon-player .tp-content .tp-links a {
         color: #aaa;
         margin-right: 0.5em;
-        padding-right: 5px;
-        background: url("external.png") no-repeat 100% 0%; }
+        padding-right: 5px; }
+        .tryphon-player .tp-content .tp-links a.external {
+          background: url("external.png") no-repeat 100% 0%; }
+        .tryphon-player .tp-content .tp-links a.download {
+          padding-right: 8px;
+          background: url("download.png") no-repeat 100% 50%; }

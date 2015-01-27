@@ -94,6 +94,7 @@ class @Tryphon.Player
       url: "http://#{@domain()}/swf",
       debugMode: true,
       # preferFlash: true,
+      # debugFlash: true,
       useHTML5Audio: true,
       html5PollingInterval: 100,
       flashVersion: 9,
@@ -112,8 +113,10 @@ class @Tryphon.Player
       if url? and url.length > 0
         unless @_included_player_css?
           @_included_player_css = true
-          Tryphon.log "Include custom CSS : #{url}"
-          $('head').append("<link rel='stylesheet' type='text/css' href='#{url}'/>")
+          include_css = () ->
+            Tryphon.log "Include custom CSS : #{url}"
+            $('head').append("<link rel='stylesheet' type='text/css' href='#{url}'/>")
+          setTimeout(include_css, 1)
 
   class: (klass) ->
     # "peak left" => "tp-peak tp-left"
@@ -276,7 +279,7 @@ class @Tryphon.Player
   create_links: () =>
     Tryphon.log "Create Links"
     for link in @links()
-      @view_links().append("<a href=\"#{link.url}.m3u\" data-link=\"#{link.url}.m3u\" target=\"_blank\">#{link.name}</a>")
+      @view_links().append("<a href=\"#{link.url}\" class=\"#{link.class}\" data-link=\"#{link.url}\" target=\"_blank\">#{link.name}</a>")
 
 class @Tryphon.Player.AudioBank extends Tryphon.Player
   @support_url : (url) ->
@@ -358,11 +361,23 @@ class @Tryphon.Player.AudioBank extends Tryphon.Player
     [
       {
         name: "Mp3",
-        url: @cast.audiobank_url("mp3")
+        url: @cast.audiobank_url("mp3"),
+        class: "download"
       },
       {
         name: "Ogg/Vorbis",
-        url: @cast.audiobank_url("ogg")
+        url: @cast.audiobank_url("ogg"),
+        class: "download"
+      },
+      {
+        name: "Mp3",
+        url: @cast.audiobank_url("mp3.m3u"),
+        class: "external"
+      },
+      {
+        name: "Ogg/Vorbis",
+        url: @cast.audiobank_url("ogg.m3u"),
+        class: "external"
       }
     ]
 
@@ -454,7 +469,8 @@ class @Tryphon.Player.Stream extends Tryphon.Player
     for mount_point in @stream.mount_points
       {
         name: mount_point.name,
-        url: @stream.mount_point_url(mount_point.path)
+        url: @stream.mount_point_url(mount_point.path) + ".m3u",
+        class: "external"
       }
 
 class Tryphon.Stream

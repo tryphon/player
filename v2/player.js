@@ -161,12 +161,16 @@
     };
 
     Player.include_player_css = function(url) {
+      var include_css;
       if (!this.ignore_player_css_url) {
         if ((url != null) && url.length > 0) {
           if (this._included_player_css == null) {
             this._included_player_css = true;
-            Tryphon.log("Include custom CSS : " + url);
-            return $('head').append("<link rel='stylesheet' type='text/css' href='" + url + "'/>");
+            include_css = function() {
+              Tryphon.log("Include custom CSS : " + url);
+              return $('head').append("<link rel='stylesheet' type='text/css' href='" + url + "'/>");
+            };
+            return setTimeout(include_css, 1);
           }
         }
       }
@@ -407,7 +411,7 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         link = _ref[_i];
-        _results.push(this.view_links().append("<a href=\"" + link.url + ".m3u\" data-link=\"" + link.url + ".m3u\" target=\"_blank\">" + link.name + "</a>"));
+        _results.push(this.view_links().append("<a href=\"" + link.url + "\" class=\"" + link["class"] + "\" data-link=\"" + link.url + "\" target=\"_blank\">" + link.name + "</a>"));
       }
       return _results;
     };
@@ -542,10 +546,20 @@
       return [
         {
           name: "Mp3",
-          url: this.cast.audiobank_url("mp3")
+          url: this.cast.audiobank_url("mp3"),
+          "class": "download"
         }, {
           name: "Ogg/Vorbis",
-          url: this.cast.audiobank_url("ogg")
+          url: this.cast.audiobank_url("ogg"),
+          "class": "download"
+        }, {
+          name: "Mp3",
+          url: this.cast.audiobank_url("mp3.m3u"),
+          "class": "external"
+        }, {
+          name: "Ogg/Vorbis",
+          url: this.cast.audiobank_url("ogg.m3u"),
+          "class": "external"
         }
       ];
     };
@@ -698,7 +712,8 @@
         mount_point = _ref[_i];
         _results.push({
           name: mount_point.name,
-          url: this.stream.mount_point_url(mount_point.path)
+          url: this.stream.mount_point_url(mount_point.path) + ".m3u",
+          "class": "external"
         });
       }
       return _results;
