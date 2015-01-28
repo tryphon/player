@@ -81,6 +81,7 @@
       this.view_root = __bind(this.view_root, this);
       this.token = __bind(this.token, this);
       this.query_params = __bind(this.query_params, this);
+      this.invoke_url_rewriter = __bind(this.invoke_url_rewriter, this);
       this.rewrite_url = __bind(this.rewrite_url, this);
       Tryphon.log("Create Player for " + this.view[0]);
       this.init();
@@ -214,10 +215,14 @@
         url = "" + url + "?token=" + (this.token());
       }
       if (Tryphon.Player.url_rewriter != null) {
-        return Tryphon.Player.url_rewriter(url);
+        return this.invoke_url_rewriter(url);
       } else {
         return url;
       }
+    };
+
+    Player.prototype.invoke_url_rewriter = function(url) {
+      return Tryphon.Player.url_rewriter(url);
     };
 
     Player.prototype.query_params = function() {
@@ -436,6 +441,7 @@
       this.set_duration = __bind(this.set_duration, this);
       this.view_duration = __bind(this.view_duration, this);
       this.set_attributes = __bind(this.set_attributes, this);
+      this.invoke_url_rewriter = __bind(this.invoke_url_rewriter, this);
       return AudioBank.__super__.constructor.apply(this, arguments);
     }
 
@@ -444,7 +450,18 @@
     };
 
     AudioBank.prototype.init = function() {
-      return this.cast = new Tryphon.AudioBankCast(this.view.attr('href'));
+      this.cast = new Tryphon.AudioBankCast(this.view.attr('href'));
+      return this.document_id = this.view.data("id");
+    };
+
+    AudioBank.prototype.invoke_url_rewriter = function(url) {
+      if (this.document_id != null) {
+        return Tryphon.Player.url_rewriter(url, {
+          id: this.document_id
+        });
+      } else {
+        return AudioBank.__super__.invoke_url_rewriter.call(this, url);
+      }
     };
 
     AudioBank.prototype.init_view = function() {

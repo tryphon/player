@@ -146,9 +146,12 @@ class @Tryphon.Player
       Tryphon.log "Include token from config : #{@token()}"
       url = "#{url}?token=#{@token()}"
     if Tryphon.Player.url_rewriter?
-      Tryphon.Player.url_rewriter url
+      @invoke_url_rewriter url
     else
       url
+
+  invoke_url_rewriter: (url) =>
+    Tryphon.Player.url_rewriter url
 
   query_params: () =>
     @_query_params ||= Tryphon.parse_query @view.attr('href')
@@ -287,6 +290,13 @@ class @Tryphon.Player.AudioBank extends Tryphon.Player
 
   init: () ->
     @cast = new Tryphon.AudioBankCast(@view.attr('href'))
+    @document_id = @view.data("id")
+
+  invoke_url_rewriter: (url) =>
+    if @document_id?
+      Tryphon.Player.url_rewriter url, id: @document_id
+    else
+      super url
 
   init_view: () ->
     $(@view).wrap("<div class='audiobank #{$(@view).attr('class')}'>#{@div_tag('content')}</div>")
